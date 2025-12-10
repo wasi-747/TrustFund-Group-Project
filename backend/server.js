@@ -15,8 +15,9 @@ mongoose
   .then(() => console.log("✅ MongoDB Connected!"))
   .catch((err) => console.error("❌ Database Connection Error:", err));
 
-// Routes (To be added by Member 3)
-app.use("/api/auth", require("./routes/auth"));
+// --- THIS IS THE NEW LINE YOU NEED ---
+app.use("/api/auth", require("./routes/auth")); 
+// ------------------------------------
 
 const PORT = 5000;
 app.listen(PORT, () => {
