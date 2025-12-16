@@ -18,8 +18,14 @@ mongoose
   .then(() => console.log("✅ MongoDB Connected!"))
   .catch((err) => console.error(err));
 
+<<<<<<< HEAD
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/campaigns", require("./routes/campaign"));
+=======
+// --- THIS IS THE NEW LINE YOU NEED ---
+app.use("/api/auth", require("./routes/auth")); 
+// ------------------------------------
+>>>>>>> d32546ce34539d6b08013170cca67db1821eb437
 
 const PORT = 5000;
 app.listen(PORT, () => {
