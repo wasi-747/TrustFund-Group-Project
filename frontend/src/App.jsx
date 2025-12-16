@@ -4,29 +4,81 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
+
+// Components
 import Navbar from "./components/Navbar";
+import InteractiveBackground from "./components/InteractiveBackground";
+import PageWrapper from "./components/PageWrapper";
+
+// Pages
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import CreateCampaign from "./pages/CreateCampaign";
 
-// Temporary Placeholder for Dashboard
-const Dashboard = () => (
-  <div className="p-10 text-center text-2xl font-bold">
-    Dashboard Coming Soon...
-  </div>
-);
+// 🎬 This component handles the animation logic
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        {/* Public Pages */}
+        <Route path="/" element={<Navigate to="/login" />} />
+
+        <Route
+          path="/login"
+          element={
+            <PageWrapper>
+              <Login />
+            </PageWrapper>
+          }
+        />
+
+        <Route
+          path="/register"
+          element={
+            <PageWrapper>
+              <Register />
+            </PageWrapper>
+          }
+        />
+
+        {/* Week 2 Features */}
+        <Route
+          path="/dashboard"
+          element={
+            <PageWrapper>
+              <Dashboard />
+            </PageWrapper>
+          }
+        />
+
+        <Route
+          path="/create-campaign"
+          element={
+            <PageWrapper>
+              <CreateCampaign />
+            </PageWrapper>
+          }
+        />
+      </Routes>
+    </AnimatePresence>
+  );
+};
 
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
+      {/* 🌌 The New Interactive Background */}
+      <InteractiveBackground />
+
+      <div className="min-h-screen text-white font-sans selection:bg-green-500 selection:text-black relative z-10">
         <Navbar />
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
+        <AnimatedRoutes />
       </div>
     </Router>
   );

@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* We removed the body gradient because InteractiveBackground handles it now */
+body {
+  margin: 0;
+  color: white;
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+  background-color: #020617; /* Fallback color */
+  overflow-x: hidden;
+}
+
+/* ✨ Glassmorphism Card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* 🚀 Glowing Inputs */
+.input-glow {
+  @apply bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all duration-300;
+}
