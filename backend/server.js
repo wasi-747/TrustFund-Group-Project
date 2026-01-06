@@ -2,32 +2,55 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const path = require("path"); // <--- Import Path
+const path = require("path");
+const http = require("http");
+const { Server } = require("socket.io");
 
 dotenv.config();
 const app = express();
+const server = http.createServer(app);
 
+// ⚡ SETUP SOCKET.IO
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
+app.set("io", io);
+
+io.on("connection", (socket) => {
+  console.log("⚡ Client Connected:", socket.id);
+  socket.on("disconnect", () => {
+    console.log("❌ Client Disconnected");
+  });
+});
+
+// ✅ MIDDLEWARE (Must be BEFORE routes)
 app.use(express.json());
 app.use(cors());
+app.use(express.urlencoded({ extended: true }));
 
-// Make the 'uploads' folder public so the frontend can see images
+// ✅ IMPORTANT: Make 'uploads' folder public so frontend can display images
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected!"))
   .catch((err) => console.error(err));
 
-<<<<<<< HEAD
+// ✅ DEFINE ROUTES
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/campaigns", require("./routes/campaign"));
-=======
-// --- THIS IS THE NEW LINE YOU NEED ---
-app.use("/api/auth", require("./routes/auth")); 
-// ------------------------------------
->>>>>>> d32546ce34539d6b08013170cca67db1821eb437
+app.use("/api/ai", require("./routes/ai"));
+app.use("/api/payment", require("./routes/payment"));
+app.use("/api/verification", require("./routes/verification"));
+app.use("/api/users", require("./routes/user"));
+app.use("/api/admin", require("./routes/admin")); 
 
 const PORT = 5000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
