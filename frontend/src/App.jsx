@@ -1,34 +1,197 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
+import { jwtDecode } from "jwt-decode";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+// Context
+import { ThemeProvider, useTheme } from "./context/ThemeContext";
+
+// Components
 import Navbar from "./components/Navbar";
+import InteractiveBackground from "./components/InteractiveBackground";
+import PageWrapper from "./components/PageWrapper";
+import AdminRoute from "./components/AdminRoute"; // 👈 IMPORT GUARD
+
+// Pages
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import CampaignDetails from "./pages/CampaignDetails";
+import StartFundraiser from "./pages/StartFundraiser";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentFail from "./pages/PaymentFail";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
+import AdminDashboard from "./pages/AdminDashboard";
 
-// Temporary Placeholder for Dashboard
-const Dashboard = () => (
-  <div className="p-10 text-center text-2xl font-bold">
-    Dashboard Coming Soon...
-  </div>
-);
+const AppContent = () => {
+  const { theme } = useTheme();
+  const location = useLocation();
+
+  return (
+    <>
+      <div className="fixed inset-0 z-0 block">
+        <InteractiveBackground theme={theme} />
+      </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        theme={theme === "light" ? "light" : "dark"}
+      />
+
+      <div className="min-h-screen font-sans relative z-10 transition-colors duration-300 dark:text-white text-gray-900">
+        <Navbar />
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<Navigate to="/login" />} />
+
+            {/* Public Routes */}
+            <Route
+              path="/login"
+              element={
+                <PageWrapper>
+                  <Login />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <PageWrapper>
+                  <Register />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/forgot-password"
+              element={
+                <PageWrapper>
+                  <ForgotPassword />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/reset-password"
+              element={
+                <PageWrapper>
+                  <ResetPassword />
+                </PageWrapper>
+              }
+            />
+
+            {/* User Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <PageWrapper>
+                  <Dashboard />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PageWrapper>
+                  <Profile />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <PageWrapper>
+                  <Settings />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/create-campaign"
+              element={
+                <PageWrapper>
+                  <StartFundraiser />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/campaign/:id"
+              element={
+                <PageWrapper>
+                  <CampaignDetails />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/payment/success"
+              element={
+                <PageWrapper>
+                  <PaymentSuccess />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/payment/fail"
+              element={
+                <PageWrapper>
+                  <PaymentFail />
+                </PageWrapper>
+              }
+            />
+
+            {/* 🔒 ADMIN ROUTE (Protected) */}
+            <Route element={<AdminRoute />}>
+              <Route
+                path="/admin"
+                element={
+                  <PageWrapper>
+                    <AdminDashboard />
+                  </PageWrapper>
+                }
+              />
+            </Route>
+          </Routes>
+        </AnimatePresence>
+      </div>
+    </>
+  );
+};
 
 function App() {
+  useEffect(() => {
+    const checkToken = () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const decoded = jwtDecode(token);
+          if (decoded.exp < Date.now() / 1000) {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+          }
+        } catch (error) {
+          localStorage.removeItem("token");
+        }
+      }
+    };
+    checkToken();
+    const interval = setInterval(checkToken, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </div>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </ThemeProvider>
   );
 }
 
