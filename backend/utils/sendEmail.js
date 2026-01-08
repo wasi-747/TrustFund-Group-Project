@@ -11,6 +11,11 @@ const sendEmail = async (email, subject, text, htmlContent = null) => {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
+      // 👇 NEW ADDITION: Fix for Render Timeouts
+      tls: {
+        rejectUnauthorized: false, // Prevents certificate errors on cloud
+      },
+      family: 4, // 👈 CRITICAL: Forces IPv4. This fixes the ETIMEDOUT error on Render!
     });
 
     const mailOptions = {
