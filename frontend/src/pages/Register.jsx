@@ -15,7 +15,8 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/auth/register", {
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      await axios.post("/api/auth/register", {
         name,
         email,
         password,
@@ -34,13 +35,11 @@ const Register = () => {
   const handleVerify = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/verify-otp",
-        {
-          email,
-          otp,
-        }
-      );
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      const res = await axios.post("/api/auth/verify-otp", {
+        email,
+        otp,
+      });
 
       localStorage.setItem("token", res.data.token);
       toast.success("✅ Verified! Welcome to TrustFund.", { theme: "dark" });

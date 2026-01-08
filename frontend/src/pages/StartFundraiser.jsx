@@ -120,7 +120,8 @@ const StartFundraiser = () => {
       setIsValidating(true);
       try {
         // Call the AI Validate Endpoint
-        await axios.post("http://localhost:5000/api/ai/enhance", {
+        // 👇 UPDATED: Removed "http://localhost:5000"
+        await axios.post("/api/ai/enhance", {
           text: formData.description,
           action: "validate", // 👈 This triggers the Spam Check
         });
@@ -157,24 +158,19 @@ const StartFundraiser = () => {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/ai/enhance", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text,
-          action: "enhance",
-        }),
+      // 👇 UPDATED: Converted fetch to axios & removed hardcoded URL
+      const response = await axios.post("/api/ai/enhance", {
+        text,
+        action: "enhance",
       });
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.error || "Failed to enhance text");
+      const data = response.data;
 
       if (data.enhancedText) {
         setFormData({ ...formData, description: data.enhancedText });
         toast.success("✨ Story Enhanced by AI!");
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.error || "Failed to enhance text");
     } finally {
       setLoading(false);
     }
@@ -190,18 +186,12 @@ const StartFundraiser = () => {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/ai/enhance", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text,
-          action: "suggest_title",
-        }),
+      // 👇 UPDATED: Converted fetch to axios & removed hardcoded URL
+      const response = await axios.post("/api/ai/enhance", {
+        text,
+        action: "suggest_title",
       });
-      const data = await response.json();
-
-      if (!response.ok)
-        throw new Error(data.error || "Failed to generate titles");
+      const data = response.data;
 
       // Backend returns "Title 1 | Title 2 | Title 3" via 'enhancedText'
       if (data.enhancedText) {
@@ -210,7 +200,7 @@ const StartFundraiser = () => {
         toast.success("✨ AI Generated Titles!");
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.error || "Failed to generate titles");
     } finally {
       setLoading(false);
     }
@@ -232,7 +222,8 @@ const StartFundraiser = () => {
       if (imageFile) data.append("image", imageFile);
       if (videoFile) data.append("video", videoFile);
 
-      await axios.post("http://localhost:5000/api/campaigns/create", data, {
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      await axios.post("/api/campaigns/create", data, {
         headers: { "x-auth-token": token },
       });
 

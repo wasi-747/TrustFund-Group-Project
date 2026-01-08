@@ -335,7 +335,8 @@ const Profile = () => {
         return;
       }
       try {
-        const res = await axios.get("http://localhost:5000/api/auth/me", {
+        // 👇 UPDATED: Removed "http://localhost:5000"
+        const res = await axios.get("/api/auth/me", {
           headers: { "x-auth-token": token },
         });
         setUser(res.data);
@@ -365,16 +366,13 @@ const Profile = () => {
     });
 
     try {
-      const res = await axios.put(
-        "http://localhost:5000/api/users/profile-update",
-        formData,
-        {
-          headers: {
-            "x-auth-token": token,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      const res = await axios.put("/api/users/profile-update", formData, {
+        headers: {
+          "x-auth-token": token,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       setUser(res.data);
       toast.success("Saved successfully!");
       return true;
@@ -472,16 +470,13 @@ const Profile = () => {
       );
 
     try {
-      const res = await axios.put(
-        "http://localhost:5000/api/users/profile-update",
-        formData,
-        {
-          headers: {
-            "x-auth-token": token,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      const res = await axios.put("/api/users/profile-update", formData, {
+        headers: {
+          "x-auth-token": token,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       setUser(res.data);
       setPendingUploads({ cover: null, avatar: null });
       setPreviews({ cover: null, avatar: null });

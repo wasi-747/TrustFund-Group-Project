@@ -39,17 +39,14 @@ const CreateCampaign = () => {
     }
     setIsEnhancing(true);
     try {
-      const response = await fetch("http://localhost:5000/api/ai/enhance", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Failed to enhance");
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      // Used fetch here, but updated URL. (Ideally switch to axios for consistency)
+      const response = await axios.post("/api/ai/enhance", { text });
+      const data = response.data;
 
       setFormData((prev) => ({ ...prev, description: data.enhancedText }));
     } catch (error) {
-      alert(error.message);
+      alert(error.response?.data?.error || "Failed to enhance");
     } finally {
       setIsEnhancing(false);
     }
@@ -71,7 +68,8 @@ const CreateCampaign = () => {
 
     try {
       // 🤖 Call AI to VALIDATE the story
-      const res = await axios.post("http://localhost:5000/api/ai/enhance", {
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      const res = await axios.post("/api/ai/enhance", {
         text: formData.description,
         action: "validate", // 👈 Strict Spam Check
       });
@@ -101,7 +99,8 @@ const CreateCampaign = () => {
       if (formData.deadline) data.append("deadline", formData.deadline);
       if (file) data.append("image", file);
 
-      await axios.post("http://localhost:5000/api/campaigns/create", data, {
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      await axios.post("/api/campaigns/create", data, {
         headers: { "x-auth-token": token },
       });
 

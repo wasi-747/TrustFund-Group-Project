@@ -15,6 +15,7 @@ import {
   FiActivity,
   FiMoon,
   FiSun,
+  FiShield,
 } from "react-icons/fi";
 
 const Navbar = () => {
@@ -28,7 +29,7 @@ const Navbar = () => {
     const fetchUser = async () => {
       if (!token) return;
       try {
-        const res = await axios.get("http://localhost:5000/api/auth/me", {
+        const res = await axios.get("/api/auth/me", {
           headers: { "x-auth-token": token },
         });
         setUser(res.data);
@@ -41,6 +42,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
     navigate("/login");
     window.location.reload();
   };
@@ -73,11 +75,12 @@ const Navbar = () => {
     timeoutId = setTimeout(() => setActiveMenu(null), 200);
   };
 
-  // Helper to cycle themes
   const cycleTheme = () => {
     if (theme === "dark") toggleTheme("light");
     else toggleTheme("dark");
   };
+
+  const logoLink = user?.role === "admin" ? "/admin" : "/dashboard";
 
   return (
     <nav className="fixed top-0 w-full z-50 transition-colors duration-300 dark:bg-black/80 bg-white/90 backdrop-blur-md border-b dark:border-white/10 border-gray-200">
@@ -85,15 +88,21 @@ const Navbar = () => {
         {/* LEFT SECTION */}
         <div className="flex items-center gap-8">
           <Link
-            to="/dashboard"
+            to={logoLink}
             className="text-2xl font-bold tracking-wide dark:text-white text-gray-900 flex items-center gap-2"
           >
             <span className="bg-gradient-to-r from-green-600 to-emerald-500 text-transparent bg-clip-text">
               TrustFund
             </span>
-            <span className="text-xs bg-gray-100 dark:bg-white/10 px-2 py-1 rounded text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-transparent">
-              Beta
-            </span>
+            {user?.role === "admin" ? (
+              <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded border border-red-200">
+                ADMIN
+              </span>
+            ) : (
+              <span className="text-xs bg-gray-100 dark:bg-white/10 px-2 py-1 rounded text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-transparent">
+                Beta
+              </span>
+            )}
           </Link>
 
           {/* 🟢 DONATE MENU */}
@@ -323,12 +332,20 @@ const Navbar = () => {
                 {activeMenu === "profile" && user && (
                   <div className="absolute top-16 right-0 w-80 dark:bg-black/95 bg-white border dark:border-emerald-500/20 border-gray-100 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.2)] dark:shadow-[0_0_40px_rgba(16,185,129,0.1)] py-2 animate-in fade-in slide-in-from-top-2 z-50 backdrop-blur-xl">
                     <div className="px-6 py-4 border-b dark:border-white/10 border-gray-100">
-                      <h3 className="dark:text-white text-gray-900 font-bold text-lg truncate">
-                        {user.name}
-                      </h3>
+                      {/* 👇 UPDATED HEADER: Name + Admin Badge + View Profile Link */}
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="dark:text-white text-gray-900 font-bold text-lg truncate">
+                          {user.name}
+                        </h3>
+                        {user.role === "admin" && (
+                          <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded border border-red-200 font-bold uppercase">
+                            Admin
+                          </span>
+                        )}
+                      </div>
                       <Link
                         to="/profile"
-                        className="text-sm text-emerald-500 hover:text-emerald-400 flex items-center gap-1 mt-1 transition-colors"
+                        className="text-sm text-emerald-500 hover:text-emerald-400 flex items-center gap-1 transition-colors"
                       >
                         View Profile <FiChevronRight size={14} />
                       </Link>
@@ -336,27 +353,53 @@ const Navbar = () => {
 
                     <div className="px-6 py-4 border-b dark:border-white/10 border-gray-100 dark:bg-white/5 bg-gray-50">
                       <h4 className="text-gray-500 text-xs uppercase font-bold tracking-wider mb-3">
-                        Your Impact
+                        {user.role === "admin"
+                          ? "Admin Controls"
+                          : "Your Impact"}
                       </h4>
-                      <Link
-                        to="/profile"
-                        className="flex items-center justify-between p-3 dark:bg-white/5 bg-white border dark:border-transparent border-gray-200 rounded-xl hover:shadow-md transition group"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-pink-500/10 text-pink-500 flex items-center justify-center">
-                            <FiHeart size={18} />
+
+                      {/* 👇 ADMIN SHORTCUT IN DROPDOWN */}
+                      {user.role === "admin" ? (
+                        <Link
+                          to="/admin"
+                          className="flex items-center justify-between p-3 dark:bg-red-500/10 bg-red-50 border border-red-200 dark:border-red-900 rounded-xl hover:shadow-md transition group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-red-500 text-white flex items-center justify-center">
+                              <FiShield size={18} />
+                            </div>
+                            <div>
+                              <p className="dark:text-white text-gray-900 font-bold">
+                                Admin Dashboard
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                Manage Requests
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="dark:text-white text-gray-900 font-bold">
-                              Donation History
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              View your support
-                            </p>
+                          <FiChevronRight className="text-gray-400 group-hover:text-red-500 transition" />
+                        </Link>
+                      ) : (
+                        <Link
+                          to="/profile"
+                          className="flex items-center justify-between p-3 dark:bg-white/5 bg-white border dark:border-transparent border-gray-200 rounded-xl hover:shadow-md transition group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-pink-500/10 text-pink-500 flex items-center justify-center">
+                              <FiHeart size={18} />
+                            </div>
+                            <div>
+                              <p className="dark:text-white text-gray-900 font-bold">
+                                Donation History
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                View your support
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                        <FiChevronRight className="text-gray-400 group-hover:text-emerald-500 transition" />
-                      </Link>
+                          <FiChevronRight className="text-gray-400 group-hover:text-emerald-500 transition" />
+                        </Link>
+                      )}
                     </div>
 
                     <div className="py-2">

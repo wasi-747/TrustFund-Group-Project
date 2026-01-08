@@ -19,12 +19,10 @@ const AdminDashboard = () => {
   const fetchRequests = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(
-        "http://localhost:5000/api/admin/verifications",
-        {
-          headers: { "x-auth-token": token },
-        }
-      );
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      const res = await axios.get("/api/admin/verifications", {
+        headers: { "x-auth-token": token },
+      });
       setRequests(res.data);
       setLoading(false);
     } catch (err) {
@@ -41,8 +39,9 @@ const AdminDashboard = () => {
   const handleAction = async (id, status) => {
     try {
       const token = localStorage.getItem("token");
+      // 👇 UPDATED: Removed "http://localhost:5000"
       await axios.put(
-        `http://localhost:5000/api/admin/verify-user/${id}`,
+        `/api/admin/verify-user/${id}`,
         { status },
         { headers: { "x-auth-token": token } }
       );
@@ -95,6 +94,7 @@ const AdminDashboard = () => {
                         <img
                           src={req.avatar}
                           className="w-full h-full object-cover rounded-full"
+                          alt="Avatar"
                         />
                       ) : (
                         req.name[0]

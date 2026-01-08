@@ -58,7 +58,8 @@ const Settings = () => {
       const token = localStorage.getItem("token");
       if (!token) return;
       try {
-        const res = await axios.get("http://localhost:5000/api/auth/me", {
+        // 👇 UPDATED: Removed "http://localhost:5000"
+        const res = await axios.get("/api/auth/me", {
           headers: { "x-auth-token": token },
         });
         setUser(res.data);
@@ -112,16 +113,13 @@ const Settings = () => {
     formData.append("nidImage", verificationData.nidImage);
 
     try {
-      await axios.post(
-        "http://localhost:5000/api/verification/submit",
-        formData,
-        {
-          headers: {
-            "x-auth-token": token,
-            // 👇 Let Axios set Content-Type automatically for FormData
-          },
-        }
-      );
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      await axios.post("/api/verification/submit", formData, {
+        headers: {
+          "x-auth-token": token,
+          // Axios sets Content-Type automatically for FormData
+        },
+      });
       toast.success("✅ Submitted! Waiting for Admin Approval.");
       setUser({ ...user, verificationStatus: "pending" });
     } catch (err) {
@@ -162,15 +160,12 @@ const Settings = () => {
     else if (profileData.cover) formData.append("cover", profileData.cover);
 
     try {
-      const res = await axios.put(
-        "http://localhost:5000/api/users/profile-images",
-        formData,
-        {
-          headers: {
-            "x-auth-token": token,
-          },
-        }
-      );
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      const res = await axios.put("/api/users/profile-images", formData, {
+        headers: {
+          "x-auth-token": token,
+        },
+      });
       setUser(res.data);
       toast.success("✅ Profile updated successfully!");
       setProfileData((prev) => ({ ...prev, avatar: null, cover: null }));

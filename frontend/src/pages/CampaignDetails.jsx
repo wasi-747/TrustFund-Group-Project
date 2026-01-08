@@ -15,21 +15,21 @@ const CampaignDetails = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const token = localStorage.getItem("token");
 
+  // 👇 Helper to get the backend URL for Socket.io (Axios handles itself, but Socket needs help)
+  const SOCKET_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/campaigns/${id}`
-        );
+        // 👇 UPDATED: Removed "http://localhost:5000"
+        const res = await axios.get(`/api/campaigns/${id}`);
         setCampaign(res.data);
         if (token) {
           try {
-            const userRes = await axios.get(
-              "http://localhost:5000/api/auth/me",
-              {
-                headers: { "x-auth-token": token },
-              }
-            );
+            // 👇 UPDATED: Removed "http://localhost:5000"
+            const userRes = await axios.get("/api/auth/me", {
+              headers: { "x-auth-token": token },
+            });
             setUser(userRes.data);
           } catch (e) {
             console.log("Token expired");
@@ -43,7 +43,8 @@ const CampaignDetails = () => {
   }, [id, token]);
 
   useEffect(() => {
-    const socket = io("http://localhost:5000", {
+    // 👇 UPDATED: Use dynamic URL for Socket.io
+    const socket = io(SOCKET_URL, {
       transports: ["websocket", "polling"],
       withCredentials: true,
     });
@@ -59,7 +60,7 @@ const CampaignDetails = () => {
       }
     });
     return () => socket.disconnect();
-  }, [id]);
+  }, [id, SOCKET_URL]); // Added SOCKET_URL to dependency array
 
   const handleDonate = async () => {
     if (!token) return toast.warning("Please login to donate!");
@@ -67,8 +68,9 @@ const CampaignDetails = () => {
       return toast.warning("Minimum donation amount is 50 BDT");
     }
     try {
+      // 👇 UPDATED: Removed "http://localhost:5000"
       const res = await axios.post(
-        "http://localhost:5000/api/payment/init",
+        "/api/payment/init",
         { campaignId: id, amount: donationAmount },
         { headers: { "x-auth-token": token } }
       );
@@ -80,11 +82,11 @@ const CampaignDetails = () => {
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://localhost:5000/api/campaigns/${id}`, {
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      await axios.delete(`/api/campaigns/${id}`, {
         headers: { "x-auth-token": token },
       });
 
-      // 👇 UNIFIED POPUP MESSAGE
       toast.success("🗑️ Campaign Deleted Successfully");
 
       navigate("/dashboard");

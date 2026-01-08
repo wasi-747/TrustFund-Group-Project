@@ -20,22 +20,26 @@ const Dashboard = () => {
   const [deleteId, setDeleteId] = useState(null);
   const navigate = useNavigate();
 
+  // 👇 Helper for Socket.io (It needs the full URL, unlike Axios)
+  const SOCKET_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
         if (token) {
           try {
-            const userRes = await axios.get(
-              "http://localhost:5000/api/auth/me",
-              { headers: { "x-auth-token": token } }
-            );
+            // 👇 UPDATED: Removed "http://localhost:5000"
+            const userRes = await axios.get("/api/auth/me", {
+              headers: { "x-auth-token": token },
+            });
             setUser(userRes.data);
           } catch (e) {
             console.log("Session expired");
           }
         }
-        const res = await axios.get("http://localhost:5000/api/campaigns/all");
+        // 👇 UPDATED: Removed "http://localhost:5000"
+        const res = await axios.get("/api/campaigns/all");
         setCampaigns(res.data);
       } catch (err) {
         console.error(err);
@@ -47,7 +51,8 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    const socket = io("http://localhost:5000", {
+    // 👇 UPDATED: Use dynamic URL for Socket
+    const socket = io(SOCKET_URL, {
       transports: ["websocket", "polling"],
     });
     socket.on("donation_received", (data) => {
@@ -60,7 +65,7 @@ const Dashboard = () => {
       );
     });
     return () => socket.disconnect();
-  }, []);
+  }, [SOCKET_URL]); // Added SOCKET_URL dependency
 
   const handleDeleteClick = (id) => setDeleteId(id);
 
@@ -68,7 +73,8 @@ const Dashboard = () => {
     if (!deleteId) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/campaigns/${deleteId}`, {
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      await axios.delete(`/api/campaigns/${deleteId}`, {
         headers: { "x-auth-token": token },
       });
       setCampaigns(campaigns.filter((c) => c._id !== deleteId));

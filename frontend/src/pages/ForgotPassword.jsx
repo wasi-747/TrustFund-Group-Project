@@ -13,7 +13,8 @@ const ForgotPassword = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/auth/forgot-password", {
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      await axios.post("/api/auth/forgot-password", {
         email,
       });
       toast.success("✅ Code sent! Check your inbox.");

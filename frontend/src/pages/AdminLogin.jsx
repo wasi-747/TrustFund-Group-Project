@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
-import { FiLock, FiMail, FiKey, FiArrowRight, FiShield } from "react-icons/fi";
+import { FiLock, FiMail, FiArrowRight, FiShield } from "react-icons/fi";
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -21,7 +21,8 @@ const AdminLogin = () => {
 
     try {
       // 1. Call Standard Login API
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      const res = await axios.post("/api/auth/login", {
         email,
         password,
       });
@@ -29,7 +30,9 @@ const AdminLogin = () => {
       // 2. 🛡️ CRITICAL SECURITY CHECK
       // We must fetch the user details immediately to check the role
       const token = res.data.token;
-      const userRes = await axios.get("http://localhost:5000/api/auth/me", {
+
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      const userRes = await axios.get("/api/auth/me", {
         headers: { "x-auth-token": token },
       });
 

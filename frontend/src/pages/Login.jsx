@@ -24,7 +24,8 @@ const Login = () => {
     setLoading(true);
     try {
       // Backend validates password & sends OTP email
-      await axios.post("http://localhost:5000/api/auth/login", {
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      await axios.post("/api/auth/login", {
         email,
         password,
       });
@@ -47,13 +48,11 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/verify-otp",
-        {
-          email,
-          otp,
-        }
-      );
+      // 👇 UPDATED: Removed "http://localhost:5000"
+      const res = await axios.post("/api/auth/verify-otp", {
+        email,
+        otp,
+      });
 
       // 1. Save Token & Role
       localStorage.setItem("token", res.data.token);
@@ -61,7 +60,7 @@ const Login = () => {
 
       toast.success("🚀 Login Successful!", { theme: "dark" });
 
-      // 2. CHECK ROLE & REDIRECT CORRECTLY 👈 (THIS IS THE FIX)
+      // 2. CHECK ROLE & REDIRECT CORRECTLY
       if (res.data.role === "admin") {
         navigate("/admin"); // Admins go here
       } else {
