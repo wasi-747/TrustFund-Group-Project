@@ -1,16 +1,20 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import axios from "axios"; // 👈 Import Axios
-import "./index.css";
+import React from "react";
+import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
+import "./index.css";
+import { ThemeProvider } from "./context/ThemeContext";
+import axios from "axios"; // 👈 Import axios
 
-// 👇 CONFIGURATION: Set the Global Base URL
-// If .env.production exists (Vercel), use that. Otherwise (Localhost), use port 5000.
+// 👇 ADD THIS SECTION
+// Set the base URL for all axios requests
 axios.defaults.baseURL =
   import.meta.env.VITE_API_URL || "http://localhost:5000";
+// 👆 END ADD SECTION
 
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  </React.StrictMode>
 );
