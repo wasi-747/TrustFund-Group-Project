@@ -1,7 +1,10 @@
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const dotenv = require("dotenv");
+
+// 👇 HYBRID IMPORT: Handles both v4 and older versions automatically
+const storageLib = require("multer-storage-cloudinary");
+const CloudinaryStorage = storageLib.CloudinaryStorage || storageLib;
 
 dotenv.config();
 
