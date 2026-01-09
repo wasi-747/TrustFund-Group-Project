@@ -10,7 +10,7 @@ const isLocal = window.location.hostname === "localhost";
 
 axios.defaults.baseURL = isLocal
   ? "http://localhost:5000" // Local Backend
-  : "https://your-backend-name.onrender.com"; // 👈 PASTE YOUR RENDER URL HERE
+  : "https://trustfund-yb2a.onrender.com"; // 👈 PASTE YOUR RENDER URL HERE
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
