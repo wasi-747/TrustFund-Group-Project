@@ -10,11 +10,19 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
+// ✅ DYNAMIC ORIGINS (Allows Localhost AND Vercel)
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5172",
+  "https://trustfund-frontend.vercel.app", // Your Vercel URL
+];
+
 // ⚡ SETUP SOCKET.IO
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: allowedOrigins, // Use the list above
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
@@ -27,19 +35,26 @@ io.on("connection", (socket) => {
   });
 });
 
-// ✅ MIDDLEWARE (Must be BEFORE routes)
+// ✅ MIDDLEWARE
 app.use(express.json());
-app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ IMPORTANT: Make 'uploads' folder public so frontend can display images
+// ✅ ROBUST CORS CONFIG (Crucial for live deployment)
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true, // Allows tokens/cookies if needed
+  })
+);
+
+// ✅ STATIC FOLDER (Still useful for local testing)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected!"))
-  .catch((err) => console.error(err));
+  .catch((err) => console.error("❌ MongoDB Error:", err));
 
 // ✅ DEFINE ROUTES
 app.use("/api/auth", require("./routes/auth"));
@@ -48,9 +63,10 @@ app.use("/api/ai", require("./routes/ai"));
 app.use("/api/payment", require("./routes/payment"));
 app.use("/api/verification", require("./routes/verification"));
 app.use("/api/users", require("./routes/user"));
-app.use("/api/admin", require("./routes/admin")); // 👈 Admin Route (Kept only this one)
+app.use("/api/admin", require("./routes/admin"));
 
-const PORT = 5000;
+// ✅ CRITICAL FIX FOR RENDER: Use process.env.PORT
+const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
