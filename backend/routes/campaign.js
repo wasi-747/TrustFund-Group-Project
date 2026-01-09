@@ -3,12 +3,33 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const Campaign = require("../models/Campaign");
 const User = require("../models/User");
-const upload = require("../middleware/upload");
+
+// ✅ CLOUDINARY SETUP (Replaces local upload middleware)
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const multer = require("multer");
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "campaigns",
+    allowed_formats: ["jpg", "png", "jpeg"],
+  },
+});
+
+const upload = multer({ storage });
 
 // @route   POST /api/campaigns/create
 router.post(
   "/create",
   auth,
+  // ✅ Update: Use 'upload' from above, NOT '../middleware/upload'
   upload.fields([
     { name: "image", maxCount: 1 },
     { name: "video", maxCount: 1 },
@@ -19,7 +40,7 @@ router.post(
         return res.status(400).json({ msg: "User authentication failed." });
       }
 
-      // 👇 SECURITY CHECK: VERIFICATION
+      // 👇 SECURITY CHECK: VERIFICATION (Kept from your backup)
       const user = await User.findById(req.user.id);
       if (!user.isVerified) {
         return res.status(403).json({
@@ -31,12 +52,13 @@ router.post(
         return res.status(400).json({ msg: "Cover image is required" });
       }
 
-      // ✅ CLOUDINARY UPDATE: Use .path directly
+      // ✅ FIX: Use Cloudinary URL (req.files.image[0].path)
+      // instead of "http://localhost:5000/..."
       const imagePath = req.files.image[0].path;
 
       let videoPath = "";
       if (req.files.video) {
-        videoPath = req.files.video[0].path; // ✅ Cloudinary URL
+        videoPath = req.files.video[0].path; // Cloudinary URL for video
       }
 
       const newCampaign = new Campaign({
@@ -98,7 +120,6 @@ router.delete("/:id", auth, async (req, res) => {
       return res.status(404).json({ msg: "Campaign not found" });
     }
 
-    // Check if user is the owner
     if (campaign.owner.toString() !== req.user.id) {
       return res.status(401).json({ msg: "User not authorized" });
     }
