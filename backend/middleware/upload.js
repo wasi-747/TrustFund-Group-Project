@@ -1,34 +1,26 @@
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const dotenv = require("dotenv");
-
-// 👇 HYBRID IMPORT: Handles both v4 and older versions automatically
-const storageLib = require("multer-storage-cloudinary");
-const CloudinaryStorage = storageLib.CloudinaryStorage || storageLib;
 
 dotenv.config();
 
-// 1. Configure Cloudinary Credentials
+// Configure Cloudinary
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
 });
 
-// 2. Configure Storage Engine
+// Configure Storage
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "trustfund_uploads", // Folder name in Cloudinary
-    allowed_formats: ["jpg", "png", "jpeg", "webp", "mp4", "mkv", "webm"],
-    resource_type: "auto", // Auto-detect image vs video
+    folder: "trustfund_uploads", // General folder for profiles/NIDs
+    allowed_formats: ["jpg", "png", "jpeg"],
   },
 });
 
-// 3. Initialize Multer
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB Limit
-});
+const upload = multer({ storage: storage });
 
 module.exports = upload;
