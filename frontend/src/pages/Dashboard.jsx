@@ -21,8 +21,11 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   // 👇 Helper for Socket.io (It needs the full URL, unlike Axios)
-  const SOCKET_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-
+  // ✅ SMART SOCKET URL
+  const isLocal = window.location.hostname === "localhost";
+  const SOCKET_URL = isLocal
+    ? "http://localhost:5000"
+    : "https://trustfund-yb2a.onrender.com"; // 👈 PASTE YOUR RENDER URL HERE
   useEffect(() => {
     const fetchData = async () => {
       try {

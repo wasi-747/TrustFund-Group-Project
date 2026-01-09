@@ -3,13 +3,14 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
 import { ThemeProvider } from "./context/ThemeContext";
-import axios from "axios"; // 👈 Import axios
+import axios from "axios";
 
-// 👇 ADD THIS SECTION
-// Set the base URL for all axios requests
-axios.defaults.baseURL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000";
-// 👆 END ADD SECTION
+// 👇 SMART SWITCH: Automatically detects if you are on Vercel or Localhost
+const isLocal = window.location.hostname === "localhost";
+
+axios.defaults.baseURL = isLocal
+  ? "http://localhost:5000" // Local Backend
+  : "https://your-backend-name.onrender.com"; // 👈 PASTE YOUR RENDER URL HERE
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

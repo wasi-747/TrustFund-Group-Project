@@ -161,7 +161,7 @@ const Settings = () => {
 
     try {
       // 👇 UPDATED: Removed "http://localhost:5000"
-      const res = await axios.put("/api/users/profile-images", formData, {
+      const res = await axios.put("/api/users/profile-update", formData, {
         headers: {
           "x-auth-token": token,
         },
