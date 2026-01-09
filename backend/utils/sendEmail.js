@@ -1,21 +1,19 @@
 const nodemailer = require("nodemailer");
 
-// Updated to accept HTML content optionally
 const sendEmail = async (email, subject, text, htmlContent = null) => {
   try {
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com", // 👈 Explicitly set Gmail host
-      port: 465, // 👈 CHANGE: Port 465 is crucial for Render
-      secure: true, // 👈 CHANGE: true for port 465, false for other ports
+      host: "smtp.gmail.com",
+      port: 587, // 👈 CHANGE: Switched to 587 (TLS)
+      secure: false, // 👈 CHANGE: Must be false for 587
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-      // 👇 NEW ADDITION: Fix for Render Timeouts
       tls: {
-        rejectUnauthorized: false, // Prevents certificate errors on cloud
+        rejectUnauthorized: false,
       },
-      family: 4, // 👈 CRITICAL: Forces IPv4. This fixes the ETIMEDOUT error on Render!
+      family: 4, // 👈 KEEP THIS: Still forces IPv4
     });
 
     const mailOptions = {
@@ -29,13 +27,11 @@ const sendEmail = async (email, subject, text, htmlContent = null) => {
       mailOptions.html = htmlContent;
     }
 
-    // Attempt to send
     await transporter.sendMail(mailOptions);
     console.log(`📧 Email sent successfully to ${email}`);
   } catch (error) {
-    // 🛡️ SAFETY NET: This catch block prevents the server from crashing.
-    // Even if email fails, the code will continue running.
     console.error("❌ Email not sent:", error);
+    // Note: We don't throw the error so the login flow doesn't crash
   }
 };
 
