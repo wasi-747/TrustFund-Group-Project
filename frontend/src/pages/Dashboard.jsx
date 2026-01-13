@@ -26,19 +26,33 @@ const Dashboard = () => {
         const token = localStorage.getItem("token");
         if (token) {
           try {
-            const userRes = await axios.get(
-              "http://localhost:5000/api/auth/me",
-              { headers: { "x-auth-token": token } }
-            );
+            // Using relative path, axios uses baseURL from main.jsx
+            const userRes = await axios.get("/api/auth/me", {
+              headers: { "x-auth-token": token },
+            });
             setUser(userRes.data);
           } catch (e) {
-            console.log("Session expired");
+            console.log("Session expired or auth failed", e);
+            // Optionally remove token if invalid
+            if (e.response && e.response.status === 401) {
+             // localStorage.removeItem("token");
+            }
           }
         }
-        const res = await axios.get("http://localhost:5000/api/campaigns/all");
-        setCampaigns(res.data);
+        
+        console.log("Fetching campaigns...");
+        const res = await axios.get("/api/campaigns/all");
+        console.log("Campaigns fetched:", res.data?.length);
+        
+        if (Array.isArray(res.data)) {
+          setCampaigns(res.data);
+        } else {
+          setCampaigns([]);
+          console.error("API did not return an array!", res.data);
+        }
       } catch (err) {
-        console.error(err);
+        console.error("Dashboard Fetch Error:", err);
+        toast.error("Failed to load campaigns.");
       } finally {
         setLoading(false);
       }
@@ -68,7 +82,7 @@ const Dashboard = () => {
     if (!deleteId) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/campaigns/${deleteId}`, {
+      await axios.delete(`/api/campaigns/${deleteId}`, {
         headers: { "x-auth-token": token },
       });
       setCampaigns(campaigns.filter((c) => c._id !== deleteId));
