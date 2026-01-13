@@ -1,3 +1,34 @@
+# --- Dependencies ---
 node_modules/
+package-lock.json
+# (Keep package-lock.json if you want to lock versions, but remove if it causes conflicts often)
+
+# --- Environment Variables (Secrets) ---
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+backend/.env
+frontend/.env
+
+# --- Production/Build ---
+build/
+dist/
+
+# --- Uploads & Storage ---
 uploads/
+coverage/
+
+# --- Logs ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs
+*.log
+
+# --- OS & Editor System Files ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

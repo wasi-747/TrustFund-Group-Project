@@ -2,15 +2,17 @@ const User = require("../models/User");
 
 module.exports = async function (req, res, next) {
   try {
-    // 1. Fetch the user from the DB
-    const user = await User.findById(req.user.id);
+    // OPTION A: Fast Check (If role is in token)
+    if (req.user.role === "admin") {
+      return next();
+    }
 
-    // 2. Check if they are an Admin
+    // OPTION B: Double Check (If role wasn't in token, check DB)
+    const user = await User.findById(req.user.id);
     if (user.role !== "admin") {
       return res.status(403).json({ msg: "Access denied. Admins only." });
     }
 
-    // 3. Allowed!
     next();
   } catch (err) {
     res.status(500).send("Server Error");

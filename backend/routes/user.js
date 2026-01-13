@@ -1,38 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
 const auth = require("../middleware/auth");
 const User = require("../models/User");
+const upload = require("../middleware/upload"); // Uses Cloudinary now
 
-// 1. CONFIGURE STORAGE
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const dir = "uploads/";
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir);
-    cb(null, dir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(
-      null,
-      file.fieldname +
-        "-" +
-        req.user.id +
-        "-" +
-        uniqueSuffix +
-        path.extname(file.originalname)
-    );
-  },
-});
-
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-});
-
-// 2. MASTER UPDATE ROUTE
+// 1. MASTER UPDATE ROUTE
 router.put(
   "/profile-update",
   auth,
@@ -44,8 +16,6 @@ router.put(
     try {
       const user = await User.findById(req.user.id).select("-password");
       if (!user) return res.status(404).json({ msg: "User not found" });
-
-      const baseUrl = `${req.protocol}://${req.get("host")}/`;
 
       // Text Fields
       if (req.body.name !== undefined) user.name = req.body.name;
@@ -76,23 +46,22 @@ router.put(
         user.socials = { ...user.socials, ...incomingSocials };
       }
 
-      // ⭐ NEW: HIGHLIGHTS LOGIC
+      // ⭐ HIGHLIGHTS LOGIC
       if (req.body.highlights) {
         const incomingHighlights = parseJSON(req.body.highlights, {});
-        // Merge pins and links if they exist, otherwise keep existing
         if (incomingHighlights.pins)
           user.highlights.pins = incomingHighlights.pins;
         if (incomingHighlights.links)
           user.highlights.links = incomingHighlights.links;
       }
 
-      // Image Fields
+      // ✅ CLOUDINARY UPDATE: Image Fields
       if (req.files && req.files["avatar"]) {
-        user.avatar = baseUrl + req.files["avatar"][0].path.replace(/\\/g, "/");
+        user.avatar = req.files["avatar"][0].path; // Cloudinary URL
       } else if (req.body.removeAvatar === "true") user.avatar = "";
 
       if (req.files && req.files["cover"]) {
-        user.cover = baseUrl + req.files["cover"][0].path.replace(/\\/g, "/");
+        user.cover = req.files["cover"][0].path; // Cloudinary URL
       } else if (req.body.removeCover === "true") user.cover = "";
 
       await user.save();

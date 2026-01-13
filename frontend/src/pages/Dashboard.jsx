@@ -20,13 +20,23 @@ const Dashboard = () => {
   const [deleteId, setDeleteId] = useState(null);
   const navigate = useNavigate();
 
+  // 👇 Helper for Socket.io (It needs the full URL, unlike Axios)
+  // ✅ SMART SOCKET URL
+  const isLocal = window.location.hostname === "localhost";
+  const SOCKET_URL = isLocal
+    ? "http://localhost:5000"
+    : "https://trustfund-yb2a.onrender.com"; // 👈 PASTE YOUR RENDER URL HERE
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
         if (token) {
           try {
+<<<<<<< HEAD
             // Using relative path, axios uses baseURL from main.jsx
+=======
+            // 👇 UPDATED: Removed "http://localhost:5000"
+>>>>>>> 8227c78eec66961c8a9deed2cbcfddcf746a1a0a
             const userRes = await axios.get("/api/auth/me", {
               headers: { "x-auth-token": token },
             });
@@ -39,6 +49,7 @@ const Dashboard = () => {
             }
           }
         }
+<<<<<<< HEAD
         
         console.log("Fetching campaigns...");
         const res = await axios.get("/api/campaigns/all");
@@ -50,6 +61,11 @@ const Dashboard = () => {
           setCampaigns([]);
           console.error("API did not return an array!", res.data);
         }
+=======
+        // 👇 UPDATED: Removed "http://localhost:5000"
+        const res = await axios.get("/api/campaigns/all");
+        setCampaigns(res.data);
+>>>>>>> 8227c78eec66961c8a9deed2cbcfddcf746a1a0a
       } catch (err) {
         console.error("Dashboard Fetch Error:", err);
         toast.error("Failed to load campaigns.");
@@ -61,7 +77,8 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    const socket = io("http://localhost:5000", {
+    // 👇 UPDATED: Use dynamic URL for Socket
+    const socket = io(SOCKET_URL, {
       transports: ["websocket", "polling"],
     });
     socket.on("donation_received", (data) => {
@@ -74,7 +91,7 @@ const Dashboard = () => {
       );
     });
     return () => socket.disconnect();
-  }, []);
+  }, [SOCKET_URL]); // Added SOCKET_URL dependency
 
   const handleDeleteClick = (id) => setDeleteId(id);
 
@@ -82,6 +99,10 @@ const Dashboard = () => {
     if (!deleteId) return;
     try {
       const token = localStorage.getItem("token");
+<<<<<<< HEAD
+=======
+      // 👇 UPDATED: Removed "http://localhost:5000"
+>>>>>>> 8227c78eec66961c8a9deed2cbcfddcf746a1a0a
       await axios.delete(`/api/campaigns/${deleteId}`, {
         headers: { "x-auth-token": token },
       });
@@ -212,8 +233,3 @@ const Dashboard = () => {
           </div>
         </div>
       )}
-    </div>
-  );
-};
-
-export default Dashboard;
