@@ -8,9 +8,81 @@ const auth = require("../middleware/auth");
 
 const router = express.Router();
 
+const passport = require("passport");
+const GitHubStrategy = require("passport-github2").Strategy;
+
+// 🔑 GITHUB STRATEGY SETUP
+passport.use(
+  new GitHubStrategy(
+    {
+      clientID: process.env.GITHUB_CLIENT_ID || "PLACEHOLDER_ID", // Needs .env
+      clientSecret: process.env.GITHUB_CLIENT_SECRET || "PLACEHOLDER_SECRET",
+      callbackURL: "http://localhost:5000/api/auth/github/callback",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        let user = await User.findOne({ githubId: profile.id });
+        if (!user) {
+          // Check if email exists
+          user = await User.findOne({ email: profile.emails[0]?.value });
+          if (user) {
+            user.githubId = profile.id; // Link account
+            await user.save();
+            return done(null, user);
+          }
+          // Create new user
+          user = new User({
+            name: profile.displayName || profile.username,
+            email: profile.emails?.[0]?.value,
+            githubId: profile.id,
+            role: "contributor",
+            isVerified: true, // GitHub users trusted? Maybe.
+          });
+          await user.save();
+        }
+        return done(null, user);
+      } catch (err) {
+        return done(err, null);
+      }
+    }
+  )
+);
+
+// Serialize/Deserialize
+passport.serializeUser((user, done) => done(null, user.id));
+passport.deserializeUser((id, done) => {
+  User.findById(id).then((user) => done(null, user));
+});
+
 // Helper: Generate 6-digit OTP
 const generateOTP = () =>
   Math.floor(100000 + Math.random() * 900000).toString();
+
+// @route   GET /api/auth/github
+router.get(
+  "/github",
+  passport.authenticate("github", { scope: ["user:email"] })
+);
+
+// @route   GET /api/auth/github/callback
+router.get(
+  "/github/callback",
+  passport.authenticate("github", { failureRedirect: "/login" }),
+  (req, res) => {
+    // Generate JWT for Frontend
+    const payload = { user: { id: req.user.id, role: req.user.role } };
+    jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      { expiresIn: "5d" },
+      (err, token) => {
+        if (err) throw err;
+        // Redirect to Frontend with Token
+        res.redirect(`${process.env.FRONTEND_URL || "http://localhost:5173"}/login?token=${token}`);
+      }
+    );
+  }
+);
 
 // @route   GET /api/auth/me
 router.get("/me", auth, async (req, res) => {

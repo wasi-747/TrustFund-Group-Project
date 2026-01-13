@@ -2,34 +2,13 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const Campaign = require("../models/Campaign");
-const User = require("../models/User");
-
-// ✅ CLOUDINARY SETUP (Replaces local upload middleware)
-const cloudinary = require("cloudinary").v2;
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const multer = require("multer");
-
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUD_API_KEY,
-  api_secret: process.env.CLOUD_API_SECRET,
-});
-
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "campaigns",
-    allowed_formats: ["jpg", "png", "jpeg"],
-  },
-});
-
-const upload = multer({ storage });
+const User = require("../models/User"); // 👈 IMPORT USER MODEL
+const upload = require("../middleware/upload");
 
 // @route   POST /api/campaigns/create
 router.post(
   "/create",
   auth,
-  // ✅ Update: Use 'upload' from above, NOT '../middleware/upload'
   upload.fields([
     { name: "image", maxCount: 1 },
     { name: "video", maxCount: 1 },
@@ -40,7 +19,11 @@ router.post(
         return res.status(400).json({ msg: "User authentication failed." });
       }
 
-      // 👇 SECURITY CHECK: VERIFICATION (Kept from your backup)
+      console.log("📝 Creating Campaign for User:", req.user.id);
+      console.log("📦 Body Keys:", Object.keys(req.body));
+      if (req.body.milestones) console.log("🥅 Milestones Raw:", req.body.milestones);
+
+      // 👇 NEW SECURITY CHECK: VERIFICATION
       const user = await User.findById(req.user.id);
       if (!user.isVerified) {
         return res.status(403).json({
@@ -52,13 +35,12 @@ router.post(
         return res.status(400).json({ msg: "Cover image is required" });
       }
 
-      // ✅ FIX: Use Cloudinary URL (req.files.image[0].path)
-      // instead of "http://localhost:5000/..."
-      const imagePath = req.files.image[0].path;
-
+      const imagePath =
+        "http://localhost:5000/uploads/" + req.files.image[0].filename;
       let videoPath = "";
       if (req.files.video) {
-        videoPath = req.files.video[0].path; // Cloudinary URL for video
+        videoPath =
+          "http://localhost:5000/uploads/" + req.files.video[0].filename;
       }
 
       const newCampaign = new Campaign({
@@ -74,6 +56,23 @@ router.post(
         image: imagePath,
         video: videoPath,
       });
+
+      // 🛑 HANDLE MILESTONES (Parse JSON string if sent as FormData)
+      if (req.body.milestones) {
+        try {
+            const milestones = JSON.parse(req.body.milestones);
+            if (Array.isArray(milestones)) {
+                newCampaign.milestones = milestones.map(m =>({
+                    title: m.title,
+                    amount: Number(m.amount),
+                    description: m.description,
+                    status: "locked"
+                }));
+            }
+        } catch (e) {
+            console.error("Failed to parse milestones:", e);
+        }
+      }
 
       const campaign = await newCampaign.save();
       res.json(campaign);
@@ -120,6 +119,7 @@ router.delete("/:id", auth, async (req, res) => {
       return res.status(404).json({ msg: "Campaign not found" });
     }
 
+    // Check if user is the owner
     if (campaign.owner.toString() !== req.user.id) {
       return res.status(401).json({ msg: "User not authorized" });
     }
@@ -131,5 +131,95 @@ router.delete("/:id", auth, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
+// @route   PUT /api/campaigns/milestone/submit-proof
+router.put(
+  "/milestone/submit-proof",
+  auth,
+  upload.single("proof"),
+  async (req, res) => {
+    try {
+      const { campaignId, milestoneId, description } = req.body;
+      const proofUrl = req.file
+        ? `${process.env.SERVER_URL || "http://localhost:5000"}/uploads/${
+            req.file.filename
+          }`
+        : req.body.proofUrl; // Fallback if just sending a link
+
+      const campaign = await Campaign.findById(campaignId);
+      if (!campaign)
+        return res.status(404).json({ msg: "Campaign not found" });
+
+      if (campaign.owner.toString() !== req.user.id) {
+        return res.status(401).json({ msg: "Not authorized" });
+      }
+
+      const milestone = campaign.milestones.id(milestoneId);
+      if (!milestone)
+        return res.status(404).json({ msg: "Milestone not found" });
+
+      milestone.proofUrl = proofUrl;
+      milestone.proofDescription = description;
+      milestone.status = "pending_approval";
+      milestone.submittedAt = Date.now();
+
+      await campaign.save();
+      res.json(campaign);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server Error");
+    }
+  }
+
+);
+
+// @route   POST /api/campaigns/donate/:id
+// @desc    Donate to a campaign
+// @access  Public (or Private)
+router.post("/donate/:id", async (req, res) => {
+  const { amount, name, message } = req.body;
+
+  try {
+    const campaign = await Campaign.findById(req.params.id);
+    if (!campaign) {
+      return res.status(404).json({ msg: "Campaign not found" });
+    }
+
+    // Update amount
+    // In a real app, this would happen AFTER payment gateway confirmation
+    campaign.currentAmount = (campaign.currentAmount || 0) + Number(amount);
+
+    // Add to history
+    const newDonation = {
+        name: name || "Anonymous",
+        amount: Number(amount),
+        message,
+        date: new Date()
+    };
+    
+    // Add user ID if authenticated (optional, depends on how you handle this)
+    // if(req.user) newDonation.user = req.user.id;
+
+    if (!campaign.donators) campaign.donators = [];
+    campaign.donators.unshift(newDonation); // Add to top
+
+    await campaign.save();
+
+    // ⚡ REAL-TIME: Emit Event
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("new_donation", { 
+          campaignId: campaign._id, 
+          donation: newDonation 
+      });
+    }
+
+    res.json(campaign);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 
 module.exports = router;

@@ -15,7 +15,7 @@ const is_live = process.env.IS_LIVE === "true";
 // @route   POST /api/payment/init
 router.post("/init", auth, async (req, res) => {
   try {
-    const { campaignId, amount } = req.body;
+    const { campaignId, amount, isAnonymous } = req.body;
 
     // 🛑 BACKEND SECURITY CHECK: Minimum Donation Limit (50 BDT)
     if (parseInt(amount) < 50) {
@@ -60,7 +60,9 @@ router.post("/init", auth, async (req, res) => {
       donorId: req.user.id,
       transactionId: tran_id,
       amount,
+      amount,
       status: "Pending",
+      isAnonymous: isAnonymous || false,
     });
     await newDonation.save();
 
@@ -91,10 +93,21 @@ router.post("/success/:tranId", async (req, res) => {
     donation.status = "Paid";
     await donation.save();
 
-    // 3. Update Campaign
+    // 3. Update Campaign (Amount + Donators List)
+    const donorUser = await User.findById(donation.donorId);
+    const donorName = donation.isAnonymous ? "Anonymous" : (donorUser ? donorUser.name : "Guest");
+
     const campaign = await Campaign.findByIdAndUpdate(donation.campaignId, {
       $inc: { currentAmount: donation.amount },
-    });
+      $push: {
+        donators: {
+          user: donation.donorId,
+          name: donorName,
+          amount: donation.amount,
+          date: new Date(),
+        }
+      }
+    }, { new: true }); // Return updated doc used for email
 
     console.log(`✅ Payment Successful! Added ${donation.amount} to campaign.`);
 
@@ -146,9 +159,22 @@ router.post("/success/:tranId", async (req, res) => {
     const io = req.app.get("io");
     if (io) {
       console.log("📡 Emitting 'donation_received' event now...");
+      
+      // Emit generic update (total amount)
       io.emit("donation_received", {
         campaignId: donation.campaignId.toString(),
         amount: donation.amount,
+      });
+
+      // Emit specific new donation event (for list)
+      io.emit("new_donation", {
+        campaignId: donation.campaignId.toString(),
+        donation: {
+            name: donorName,
+            amount: donation.amount,
+            date: new Date(),
+            message: "" // Add message support later if needed
+        }
       });
     } else {
       console.error("❌ Socket.io instance NOT found in request!");
