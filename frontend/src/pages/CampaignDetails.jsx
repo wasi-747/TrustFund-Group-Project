@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { io } from "socket.io-client";
 import { FiTrash2, FiAlertTriangle } from "react-icons/fi";
+import MilestoneTracker from "../components/MilestoneTracker";
 
 const CampaignDetails = () => {
   const { id } = useParams();
@@ -13,23 +14,28 @@ const CampaignDetails = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [user, setUser] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const token = localStorage.getItem("token");
+  const [activeTab, setActiveTab] = useState("story");
 
-  // 👇 Helper to get the backend URL for Socket.io (Axios handles itself, but Socket needs help)
-  const SOCKET_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const [donations, setDonations] = useState([]);
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 👇 UPDATED: Removed "http://localhost:5000"
-        const res = await axios.get(`/api/campaigns/${id}`);
+        const res = await axios.get(
+          `http://localhost:5000/api/campaigns/${id}`
+        );
         setCampaign(res.data);
+        setDonations(res.data.donators || []);
         if (token) {
           try {
-            // 👇 UPDATED: Removed "http://localhost:5000"
-            const userRes = await axios.get("/api/auth/me", {
-              headers: { "x-auth-token": token },
-            });
+            const userRes = await axios.get(
+              "http://localhost:5000/api/auth/me",
+              {
+                headers: { "x-auth-token": token },
+              }
+            );
             setUser(userRes.data);
           } catch (e) {
             console.log("Token expired");
@@ -43,8 +49,7 @@ const CampaignDetails = () => {
   }, [id, token]);
 
   useEffect(() => {
-    // 👇 UPDATED: Use dynamic URL for Socket.io
-    const socket = io(SOCKET_URL, {
+    const socket = io("http://localhost:5000", {
       transports: ["websocket", "polling"],
       withCredentials: true,
     });
@@ -59,8 +64,16 @@ const CampaignDetails = () => {
         toast.success(`🎉 New Donation: ৳${data.amount}!`);
       }
     });
+    
+    // Listen for new individual donations
+    socket.on("new_donation", (data) => {
+        if (data.campaignId === id) {
+            setDonations(prev => [data.donation, ...prev]);
+        }
+    });
+
     return () => socket.disconnect();
-  }, [id, SOCKET_URL]); // Added SOCKET_URL to dependency array
+  }, [id]);
 
   const handleDonate = async () => {
     if (!token) return toast.warning("Please login to donate!");
@@ -68,10 +81,9 @@ const CampaignDetails = () => {
       return toast.warning("Minimum donation amount is 50 BDT");
     }
     try {
-      // 👇 UPDATED: Removed "http://localhost:5000"
       const res = await axios.post(
-        "/api/payment/init",
-        { campaignId: id, amount: donationAmount },
+        "http://localhost:5000/api/payment/init",
+        { campaignId: id, amount: donationAmount, isAnonymous },
         { headers: { "x-auth-token": token } }
       );
       if (res.data.url) window.location.replace(res.data.url);
@@ -82,11 +94,11 @@ const CampaignDetails = () => {
 
   const confirmDelete = async () => {
     try {
-      // 👇 UPDATED: Removed "http://localhost:5000"
-      await axios.delete(`/api/campaigns/${id}`, {
+      await axios.delete(`http://localhost:5000/api/campaigns/${id}`, {
         headers: { "x-auth-token": token },
       });
 
+      // 👇 UNIFIED POPUP MESSAGE
       toast.success("🗑️ Campaign Deleted Successfully");
 
       navigate("/dashboard");
@@ -168,6 +180,9 @@ const CampaignDetails = () => {
             </div>
           </div>
 
+          {/* 💰 MILESTONE TRACKER */}
+          {/* OLD MILESTONE PLACEMENT REMOVED - MOVED TO TABS */}
+
           <div className="mb-10 bg-gradient-to-r from-emerald-900/30 to-black p-6 rounded-2xl border border-emerald-500/30">
             <h3 className="text-white font-bold mb-4">Support this Cause</h3>
             <div className="flex gap-4">
@@ -184,15 +199,155 @@ const CampaignDetails = () => {
                 Donate
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-2">
-              Minimum donation: 50 BDT
+            <p className="text-xs text-gray-500 mt-2 flex items-center justify-between">
+              <span>Minimum donation: 50 BDT</span>
+              <label className="flex items-center gap-2 cursor-pointer group">
+                <input 
+                    type="checkbox" 
+                    checked={isAnonymous} 
+                    onChange={(e) => setIsAnonymous(e.target.checked)}
+                    className="w-4 h-4 rounded border-gray-600 bg-gray-900 text-emerald-500 focus:ring-emerald-500 transition"
+                />
+                <span className="text-gray-400 group-hover:text-emerald-400 transition-colors font-medium">Donate Anonymously</span>
+              </label>
             </p>
           </div>
-          <p className="text-gray-300 whitespace-pre-line leading-relaxed">
-            {campaign.description}
-          </p>
+          </div>
+
+          
+          {/* MAIN CARD FOR TABS */}
+          <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 min-h-[500px]">
+              {/* TABS */}
+              <div className="flex gap-8 border-b border-gray-700 mb-6">
+                {["story", "milestones", "transparency"].map((tab) => (
+                    <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`pb-4 text-sm font-bold uppercase tracking-wider transition-all relative ${
+                            activeTab === tab 
+                            ? "text-emerald-400" 
+                            : "text-gray-500 hover:text-gray-300"
+                        }`}
+                    >
+                        {tab}
+                        {activeTab === tab && (
+                            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)] rounded-full"></span>
+                        )}
+                    </button>
+                ))}
+              </div>
+
+              {/* TAB CONTENT */}
+              <div>
+                {activeTab === "story" && (
+                    <p className="text-gray-300 whitespace-pre-line leading-relaxed animate-fade-in text-lg">
+                        {campaign.description}
+                    </p>
+                )}
+
+                {activeTab === "milestones" && (
+                   <div className="animate-fade-in">
+                       {campaign.milestones && campaign.milestones.length > 0 ? (
+                            <MilestoneTracker
+                            milestones={campaign.milestones}
+                            releasedAmount={campaign.releasedAmount}
+                            campaignId={id}
+                            isOwner={user && campaign.owner && (user._id === campaign.owner._id || user._id === campaign.owner)}
+                            onRefresh={() => {
+                                axios.get(`http://localhost:5000/api/campaigns/${id}`)
+                                    .then(res => setCampaign(res.data))
+                                    .catch(err => console.error(err));
+                            }}
+                            />
+                       ) : (
+                           <p className="text-gray-500 italic">No milestones set for this campaign.</p>
+                       )}
+                   </div>
+                )}
+
+                {activeTab === "transparency" && (
+                    <div className="animate-fade-in space-y-6">
+                        <div className="bg-emerald-900/10 border border-emerald-500/20 p-6 rounded-2xl">
+                            <h4 className="text-emerald-400 font-bold mb-2">🛡️ Public Ledger</h4>
+                            <p className="text-sm text-gray-400 mb-4">
+                                All withdrawals are verified by our admin team against proof of work.
+                                This ensures your donations are used exactly as promised.
+                            </p>
+                            
+                            <div className="overflow-hidden rounded-xl border border-gray-700">
+                                <table className="w-full text-left text-sm text-gray-400">
+                                    <thead className="bg-gray-800 text-gray-200 uppercase font-bold">
+                                        <tr>
+                                            <th className="p-4">Date</th>
+                                            <th className="p-4">Purpose</th>
+                                            <th className="p-4 text-right">Amount</th>
+                                            <th className="p-4 text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-800 bg-gray-900/50">
+                                        {campaign.milestones
+                                            .filter(m => m.status === "approved")
+                                            .map((m, idx) => (
+                                            <tr key={idx}>
+                                                <td className="p-4">{new Date(m.updatedAt).toLocaleDateString()}</td>
+                                                <td className="p-4 text-white font-medium">{m.title}</td>
+                                                <td className="p-4 text-right text-emerald-400 font-bold">৳{m.amount.toLocaleString()}</td>
+                                                <td className="p-4 text-center">
+                                                    <span className="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs font-bold border border-emerald-500/20">
+                                                        VERIFIED
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        {campaign.milestones.filter(m => m.status === "approved").length === 0 && (
+                                            <tr>
+                                                <td colSpan="4" className="p-8 text-center text-gray-600 italic">
+                                                    No funds have been withdrawn yet.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                )}
+              </div>
+          </div>
         </div>
-      </div>
+
+        {/* RIGHT SIDEBAR - RECENT DONATIONS */}
+        <div className="lg:col-span-1 space-y-6">
+            <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6">
+                <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                    Live Donations
+                </h3>
+                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                    {donations.length > 0 ? (
+                        donations.map((d, i) => (
+                            <div key={i} className="flex gap-3 items-start animate-fade-in-up">
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-xs font-bold text-white">
+                                    {d.name.charAt(0)}
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-300">
+                                        <span className="font-bold text-white">{d.name}</span> donated <span className="text-emerald-400 font-bold">৳{d.amount}</span>
+                                    </p>
+                                    {d.message && (
+                                        <p className="text-xs text-gray-500 italic mt-1">"{d.message}"</p>
+                                    )}
+                                    <p className="text-[10px] text-gray-600 mt-1">{new Date(d.date).toLocaleTimeString()}</p>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="text-gray-500 text-sm italic">Be the first to donate!</p>
+                    )}
+                </div>
+            </div>
+        </div>
+
 
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">

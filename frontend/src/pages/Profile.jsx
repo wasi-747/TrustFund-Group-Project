@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../context/ThemeContext";
+import { useAdminMode } from "../context/AdminContext";
 // 👇 IMPORT ALL ICONS
 import {
   FiUser,
@@ -240,7 +241,7 @@ const causeVariants = {
   },
 };
 
-const ProfileStrengthCircle = ({ percentage }) => {
+const ProfileStrengthCircle = ({ percentage, missing }) => {
   const radius = 28;
   const circumference = 2 * Math.PI * radius;
   const safePercentage = isNaN(percentage) ? 0 : percentage;
@@ -255,8 +256,23 @@ const ProfileStrengthCircle = ({ percentage }) => {
 
   return (
     <div className="relative flex items-center justify-center w-16 h-16 group cursor-help">
-      <div className="absolute -top-10 bg-gray-900 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none whitespace-nowrap">
-        Profile Strength
+      <div className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 w-48 bg-gray-900/95 backdrop-blur border border-gray-700 text-white text-xs p-3 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 z-50 pointer-events-none shadow-2xl transform translate-y-2 group-hover:translate-y-0">
+        <div className="font-bold mb-2 border-b border-gray-700 pb-1 flex justify-between items-center">
+            <span>Completion</span>
+            <span className={safePercentage === 100 ? "text-emerald-400" : "text-white"}>{safePercentage}%</span>
+        </div>
+        {missing && missing.length > 0 ? (
+            <div className="space-y-1">
+                <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">Items to complete:</p>
+                <ul className="space-y-1 text-[10px] text-gray-300">
+                    {missing.map((item, i) => <li key={i} className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-red-400"></span> {item}</li>)}
+                </ul>
+            </div>
+        ) : (
+            <p className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">🎉 100% Complete! Amazing!</p>
+        )}
+        {/* Arrow */}
+        <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-8 border-transparent border-t-gray-900/95"></div>
       </div>
       <svg width="64" height="64" className="transform -rotate-90">
         <circle
@@ -317,6 +333,8 @@ const Profile = () => {
   const [linkInput, setLinkInput] = useState({ title: "", url: "" });
 
   const { theme, toggleTheme } = useTheme();
+  const { isAdminMode, toggleAdminMode } = useAdminMode(); // 👈 USE CONTEXT
+
   const coverInputRef = useRef(null);
   const avatarInputRef = useRef(null);
   const [pendingUploads, setPendingUploads] = useState({
@@ -335,8 +353,7 @@ const Profile = () => {
         return;
       }
       try {
-        // 👇 UPDATED: Removed "http://localhost:5000"
-        const res = await axios.get("/api/auth/me", {
+        const res = await axios.get("http://localhost:5000/api/auth/me", {
           headers: { "x-auth-token": token },
         });
         setUser(res.data);
@@ -366,13 +383,16 @@ const Profile = () => {
     });
 
     try {
-      // 👇 UPDATED: Removed "http://localhost:5000"
-      const res = await axios.put("/api/users/profile-update", formData, {
-        headers: {
-          "x-auth-token": token,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await axios.put(
+        "http://localhost:5000/api/users/profile-update",
+        formData,
+        {
+          headers: {
+            "x-auth-token": token,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       setUser(res.data);
       toast.success("Saved successfully!");
       return true;
@@ -470,13 +490,16 @@ const Profile = () => {
       );
 
     try {
-      // 👇 UPDATED: Removed "http://localhost:5000"
-      const res = await axios.put("/api/users/profile-update", formData, {
-        headers: {
-          "x-auth-token": token,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await axios.put(
+        "http://localhost:5000/api/users/profile-update",
+        formData,
+        {
+          headers: {
+            "x-auth-token": token,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       setUser(res.data);
       setPendingUploads({ cover: null, avatar: null });
       setPreviews({ cover: null, avatar: null });
@@ -509,6 +532,19 @@ const Profile = () => {
       score += 10;
     if (user.highlights?.pins?.length > 0) score += 15;
     return Math.min(score, 100);
+  };
+
+  const getMissingItems = () => {
+    if (!user) return [];
+    const missing = [];
+    if (!user.avatar) missing.push("Upload Avatar (+20%)");
+    if (!user.cover) missing.push("Upload Cover (+10%)");
+    if (!user.bio || user.bio.length < 5) missing.push("Write Bio (+20%)");
+    if (!user.topCauses?.length) missing.push("Select Causes (+15%)");
+    if (!user.socials || !Object.values(user.socials).some((v) => v?.length > 0))
+      missing.push("Link Socials (+10%)");
+    if (!user.highlights?.pins?.length) missing.push("Add Check/Highlight (+15%)");
+    return missing;
   };
 
   const handleCopyLink = () => {
@@ -580,6 +616,23 @@ const Profile = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* 🔴 ADMIN TOGGLE (FIXED TOP RIGHT) */}
+      {user && user.role === "admin" && (
+        <div className="fixed top-24 right-5 z-[50]">
+          <button
+            onClick={() => toggleAdminMode(!isAdminMode)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold shadow-xl border transition-all ${
+              isAdminMode
+                ? "bg-emerald-600 text-white border-emerald-500"
+                : "bg-gray-800 text-gray-400 border-gray-700 hover:text-white"
+            }`}
+          >
+            <FiShield size={18} />
+            {isAdminMode ? "Admin Mode: ON" : "Admin Mode: OFF"}
+          </button>
+        </div>
+      )}
 
       {/* --- MODALS --- */}
 
@@ -1091,7 +1144,7 @@ const Profile = () => {
           )}
 
           <div className="flex justify-center mb-6">
-            <ProfileStrengthCircle percentage={calculateStrength()} />
+            <ProfileStrengthCircle percentage={calculateStrength()} missing={getMissingItems()} />
           </div>
 
           <button

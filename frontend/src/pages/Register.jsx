@@ -15,8 +15,7 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      // 👇 UPDATED: Removed "http://localhost:5000"
-      await axios.post("/api/auth/register", {
+      await axios.post("http://localhost:5000/api/auth/register", {
         name,
         email,
         password,
@@ -35,11 +34,13 @@ const Register = () => {
   const handleVerify = async (e) => {
     e.preventDefault();
     try {
-      // 👇 UPDATED: Removed "http://localhost:5000"
-      const res = await axios.post("/api/auth/verify-otp", {
-        email,
-        otp,
-      });
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/verify-otp",
+        {
+          email,
+          otp,
+        }
+      );
 
       localStorage.setItem("token", res.data.token);
       toast.success("✅ Verified! Welcome to TrustFund.", { theme: "dark" });
@@ -81,9 +82,24 @@ const Register = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-bold hover:opacity-90 transition transform hover:scale-105">
+            <button className="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white py-3 rounded-lg font-bold transition transform hover:scale-105 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
               Register
             </button>
+
+             {/* SEPARATOR */}
+             <div className="relative flex py-2 items-center">
+                <div className="flex-grow border-t border-white/10"></div>
+                <span className="flex-shrink mx-4 text-gray-400 text-xs font-bold uppercase">Or</span>
+                <div className="flex-grow border-t border-white/10"></div>
+            </div>
+
+            {/* GITHUB BUTTON */}
+            <a
+              href="http://localhost:5000/api/auth/github"
+              className="w-full py-3 rounded-lg bg-[#24292e] text-white font-bold shadow-lg hover:bg-[#2f363d] transition-all flex items-center justify-center gap-2"
+            >
+              Continue with GitHub
+            </a>
           </form>
         ) : (
           <form onSubmit={handleVerify} className="space-y-4 animate-fade-in">

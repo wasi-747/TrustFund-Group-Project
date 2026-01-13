@@ -8,12 +8,15 @@ import {
   FiShield,
   FiArrowRight,
   FiCheckCircle,
+  FiEye,
+  FiEyeOff,
 } from "react-icons/fi";
 
 const Login = () => {
   const [step, setStep] = useState(1); // 1 = Creds, 2 = Verification
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -24,8 +27,7 @@ const Login = () => {
     setLoading(true);
     try {
       // Backend validates password & sends OTP email
-      // 👇 UPDATED: Removed "http://localhost:5000"
-      await axios.post("/api/auth/login", {
+      await axios.post("http://localhost:5000/api/auth/login", {
         email,
         password,
       });
@@ -48,11 +50,13 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // 👇 UPDATED: Removed "http://localhost:5000"
-      const res = await axios.post("/api/auth/verify-otp", {
-        email,
-        otp,
-      });
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/verify-otp",
+        {
+          email,
+          otp,
+        }
+      );
 
       // 1. Save Token & Role
       localStorage.setItem("token", res.data.token);
@@ -60,7 +64,7 @@ const Login = () => {
 
       toast.success("🚀 Login Successful!", { theme: "dark" });
 
-      // 2. CHECK ROLE & REDIRECT CORRECTLY
+      // 2. CHECK ROLE & REDIRECT CORRECTLY 👈 (THIS IS THE FIX)
       if (res.data.role === "admin") {
         navigate("/admin"); // Admins go here
       } else {
@@ -131,13 +135,20 @@ const Login = () => {
                 <div className="relative group">
                   <FiLock className="absolute left-4 top-3.5 text-gray-500 group-focus-within:text-emerald-500 transition-colors" />
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
-                    className="w-full bg-black/40 border border-gray-700 text-white p-3 pl-12 rounded-xl focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all placeholder-gray-600"
+                    className="w-full bg-black/40 border border-gray-700 text-white p-3 pl-12 pr-12 rounded-xl focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all placeholder-gray-600"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-3.5 text-gray-500 hover:text-white transition-colors"
+                  >
+                    {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+                  </button>
                 </div>
               </div>
 
@@ -235,3 +246,4 @@ const Login = () => {
 };
 
 export default Login;
+
