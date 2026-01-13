@@ -28,6 +28,10 @@ const DonationSchema = new mongoose.Schema({
     enum: ["Pending", "Paid", "Failed", "Cancelled"],
     default: "Pending",
   },
+  isAnonymous: {
+    type: Boolean,
+    default: false,
+  },
   date: {
     type: Date,
     default: Date.now,

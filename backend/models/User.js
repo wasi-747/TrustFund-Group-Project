@@ -4,7 +4,8 @@ const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   username: { type: String, default: "" },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String }, // 👈 Made Optional for OAuth
+  githubId: { type: String, unique: true, sparse: true }, // 👈 NEW
   role: {
     type: String,
     enum: ["admin", "fundraiser", "contributor"],

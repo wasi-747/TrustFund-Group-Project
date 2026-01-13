@@ -37,6 +37,36 @@ const CampaignSchema = new mongoose.Schema({
     enum: ["active", "paused", "completed", "banned"],
     default: "active",
   },
+  
+  // Milestone Escrow
+  releasedAmount: { type: Number, default: 0 },
+  milestones: [
+    {
+      title: { type: String, required: true },
+      description: { type: String },
+      amount: { type: Number, required: true },
+      status: {
+        type: String,
+        enum: ["locked", "pending_approval", "approved"],
+        default: "locked",
+      },
+      proofUrl: { type: String }, // NEW: Proof of Work Image
+      proofDescription: { type: String }, // NEW: Description
+      submittedAt: { type: Date }, // NEW: Time of submission
+      updatedAt: { type: Date },
+    },
+  ],
+
+  // Donation History (Transparency)
+  donators: [
+    {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // If logged in
+        name: { type: String, default: "Anonymous" },
+        amount: { type: Number, required: true },
+        message: { type: String },
+        date: { type: Date, default: Date.now }
+    }
+  ],
 
   date: { type: Date, default: Date.now },
 });
