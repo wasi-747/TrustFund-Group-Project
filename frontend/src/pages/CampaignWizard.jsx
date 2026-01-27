@@ -11,7 +11,6 @@ import {
   FiYoutube,
   FiImage,
   FiAlertCircle,
-
   FiRefreshCw,
   FiTrash2,
   FiEdit3,
@@ -44,8 +43,19 @@ const CampaignWizard = () => {
   const [videoFile, setVideoFile] = useState(null);
 
   // Milestone Input State
-  const [mInput, setMInput] = useState({ title: "", amount: "", description: "" });
+  const [mInput, setMInput] = useState({
+    title: "",
+    amount: "",
+    description: "",
+  });
   const [editingIndex, setEditingIndex] = useState(-1);
+
+  const goalAmount = Number(formData.targetAmount) || 0;
+  const milestoneTotal = formData.milestones.reduce(
+    (sum, m) => sum + Number(m.amount || 0),
+    0,
+  );
+  const remainingForMilestones = Math.max(goalAmount - milestoneTotal, 0);
 
   // --- HANDLERS ---
   const handleChange = (e) =>
@@ -110,18 +120,22 @@ const CampaignWizard = () => {
         }
         return true;
 
-
       case 6: // Milestones (NEW CHECK)
         if (formData.milestones.length === 0) {
-            // Optional warning? Or strict Requirement?
-            // Let's make it optional but recommended.
-            return true; 
+          // Optional warning? Or strict Requirement?
+          // Let's make it optional but recommended.
+          return true;
         }
         // Validate amounts
-        const total = formData.milestones.reduce((sum, m) => sum + Number(m.amount), 0);
+        const total = formData.milestones.reduce(
+          (sum, m) => sum + Number(m.amount),
+          0,
+        );
         if (total > Number(formData.targetAmount)) {
-             toast.warning(`Total milestone amount ($${total}) exceeds Goal ($${formData.targetAmount})`);
-             return false;
+          toast.warning(
+            `Total milestone amount (${total}) exceeds Goal (${formData.targetAmount})`,
+          );
+          return false;
         }
         return true;
 
@@ -199,12 +213,14 @@ const CampaignWizard = () => {
     setLoading(true);
     try {
       const response = await axios.post("/api/ai/enhance", {
-          text,
-          action: "suggest_title",
+        text,
+        action: "suggest_title",
       });
 
       if (response.data.enhancedText) {
-        const titles = response.data.enhancedText.split("|").map((t) => t.trim());
+        const titles = response.data.enhancedText
+          .split("|")
+          .map((t) => t.trim());
         setSuggestedTitles(titles);
         toast.success("✨ AI Generated Titles!");
       }
@@ -228,9 +244,9 @@ const CampaignWizard = () => {
       const data = new FormData();
       Object.keys(formData).forEach((key) => {
         if (key === "milestones") {
-             data.append("milestones", JSON.stringify(formData.milestones));
+          data.append("milestones", JSON.stringify(formData.milestones));
         } else {
-             data.append(key, formData[key]);
+          data.append(key, formData[key]);
         }
       });
 
@@ -279,8 +295,8 @@ const CampaignWizard = () => {
       instruction: "Create a catchy title or let AI suggest some!",
     },
     6: {
-        question: "Set your Milestones.",
-        instruction: "Break down your goal into achievable steps to build trust.",
+      question: "Set your Milestones.",
+      instruction: "Break down your goal into achievable steps to build trust.",
     },
     7: {
       question: "Ready to launch?",
@@ -303,8 +319,8 @@ const CampaignWizard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-5 h-full min-h-[600px]">
           {/* --- LEFT SIDE --- */}
           <div className="col-span-2 bg-gray-900/80 p-10 lg:p-16 flex flex-col justify-center border-r border-gray-800/50 relative overflow-hidden">
-             {/* Background Gradient */}
-             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent opacity-50 pointer-events-none"></div>
+            {/* Background Gradient */}
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent opacity-50 pointer-events-none"></div>
 
             <div className="relative z-10 animate-fade-in-up">
               <h1 className="text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-6">
@@ -327,7 +343,9 @@ const CampaignWizard = () => {
                 <div className="space-y-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">Country</label>
+                      <label className="block text-sm font-medium text-gray-400 mb-2">
+                        Country
+                      </label>
                       <input
                         type="text"
                         name="country"
@@ -338,7 +356,9 @@ const CampaignWizard = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">Zip Code</label>
+                      <label className="block text-sm font-medium text-gray-400 mb-2">
+                        Zip Code
+                      </label>
                       <input
                         type="text"
                         name="zipCode"
@@ -350,7 +370,9 @@ const CampaignWizard = () => {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-2">Category</label>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                      Category
+                    </label>
                     <select
                       name="category"
                       value={formData.category}
@@ -376,12 +398,16 @@ const CampaignWizard = () => {
               {step === 2 && (
                 <div className="space-y-8">
                   <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-4">Beneficiary</label>
-                    <div className="flex flex-col md:flex-row gap-4">
-                      {["myself", "someone-else", "charity"].map((type) => (
+                    <label className="block text-sm font-medium text-gray-400 mb-4">
+                      Beneficiary
+                    </label>
+                    <div className="flex flex-col md:flex-row gap-4 flex-wrap">
+                      {["myself", "someone-else", "charity", "team"].map((type) => (
                         <button
                           key={type}
-                          onClick={() => setFormData({ ...formData, beneficiaryType: type })}
+                          onClick={() =>
+                            setFormData({ ...formData, beneficiaryType: type })
+                          }
                           className={`flex-1 p-4 border-2 rounded-xl capitalize transition-all font-medium ${
                             formData.beneficiaryType === type
                               ? "bg-emerald-600/20 border-emerald-500 text-white shadow-sm"
@@ -394,9 +420,13 @@ const CampaignWizard = () => {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-2">Goal Amount</label>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                      Goal Amount
+                    </label>
                     <div className="relative">
-                      <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-xl font-medium">$</span>
+                      <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-xl font-medium">
+                        $
+                      </span>
                       <input
                         type="number"
                         name="targetAmount"
@@ -408,10 +438,16 @@ const CampaignWizard = () => {
                     </div>
                   </div>
                   <div className="flex gap-4 mt-8">
-                    <button onClick={prevStep} className="flex-1 bg-gray-800/50 text-gray-300 py-4 rounded-xl hover:bg-gray-700/50 transition-all flex items-center justify-center gap-2 font-medium">
+                    <button
+                      onClick={prevStep}
+                      className="flex-1 bg-gray-800/50 text-gray-300 py-4 rounded-xl hover:bg-gray-700/50 transition-all flex items-center justify-center gap-2 font-medium"
+                    >
                       <FiChevronLeft className="text-xl" /> Back
                     </button>
-                    <button onClick={handleNext} className="flex-1 bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
+                    <button
+                      onClick={handleNext}
+                      className="flex-1 bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                    >
                       Continue <FiChevronRight className="text-xl" />
                     </button>
                   </div>
@@ -422,7 +458,9 @@ const CampaignWizard = () => {
               {step === 3 && (
                 <div className="space-y-8">
                   <div className="relative">
-                    <label className="block text-sm font-medium text-gray-400 mb-2">Description</label>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                      Description
+                    </label>
                     <textarea
                       name="description"
                       value={formData.description}
@@ -441,11 +479,20 @@ const CampaignWizard = () => {
                           : "bg-gradient-to-r from-purple-600/80 to-pink-600/80 text-white border-purple-400/30 hover:from-purple-500/90 hover:to-pink-500/90"
                       }`}
                     >
-                      {loading ? "Enhancing..." : <><BsStars className="text-lg" /> ✨ Polish with AI</>}
+                      {loading ? (
+                        "Enhancing..."
+                      ) : (
+                        <>
+                          <BsStars className="text-lg" /> ✨ Polish with AI
+                        </>
+                      )}
                     </button>
                   </div>
                   <div className="flex gap-4 mt-8">
-                    <button onClick={prevStep} className="flex-1 bg-gray-800/50 text-gray-300 py-4 rounded-xl hover:bg-gray-700/50 transition-all flex items-center justify-center gap-2 font-medium">
+                    <button
+                      onClick={prevStep}
+                      className="flex-1 bg-gray-800/50 text-gray-300 py-4 rounded-xl hover:bg-gray-700/50 transition-all flex items-center justify-center gap-2 font-medium"
+                    >
                       <FiChevronLeft className="text-xl" /> Back
                     </button>
                     <button
@@ -457,7 +504,13 @@ const CampaignWizard = () => {
                           : "bg-emerald-600 text-white hover:bg-emerald-500 shadow-emerald-500/20"
                       }`}
                     >
-                      {isValidating ? <>🤖 Validating Story...</> : <>Continue <FiChevronRight className="text-xl" /></>}
+                      {isValidating ? (
+                        <>🤖 Validating Story...</>
+                      ) : (
+                        <>
+                          Continue <FiChevronRight className="text-xl" />
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
@@ -468,20 +521,34 @@ const CampaignWizard = () => {
                 <div className="space-y-8">
                   <div>
                     <label className="flex items-center gap-2 text-sm font-medium text-gray-400 mb-3">
-                      <FiImage className="text-emerald-400" /> Cover Photo <span className="text-xs text-red-400 font-bold">(Required)</span>
+                      <FiImage className="text-emerald-400" /> Cover Photo{" "}
+                      <span className="text-xs text-red-400 font-bold">
+                        (Required)
+                      </span>
                     </label>
-                    <div className={`relative border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer group ${imageFile ? "border-emerald-500/50 bg-emerald-500/10" : "border-gray-700/80 hover:border-emerald-500/50 hover:bg-gray-800/30"}`}>
-                      <input type="file" onChange={handleImage} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" accept="image/*" />
+                    <div
+                      className={`relative border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer group ${imageFile ? "border-emerald-500/50 bg-emerald-500/10" : "border-gray-700/80 hover:border-emerald-500/50 hover:bg-gray-800/30"}`}
+                    >
+                      <input
+                        type="file"
+                        onChange={handleImage}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        accept="image/*"
+                      />
                       <div className="flex flex-col items-center justify-center">
                         {imageFile ? (
                           <>
                             <FiCheck className="text-3xl text-emerald-400 mb-2 animate-bounce" />
-                            <span className="font-bold text-sm text-white break-all">{imageFile.name}</span>
+                            <span className="font-bold text-sm text-white break-all">
+                              {imageFile.name}
+                            </span>
                           </>
                         ) : (
                           <>
                             <FiUploadCloud className="text-3xl text-gray-500 mb-2 group-hover:text-emerald-400 transition-colors" />
-                            <span className="text-sm font-semibold text-gray-300">Upload Photo</span>
+                            <span className="text-sm font-semibold text-gray-300">
+                              Upload Photo
+                            </span>
                           </>
                         )}
                       </div>
@@ -489,20 +556,34 @@ const CampaignWizard = () => {
                   </div>
                   <div>
                     <label className="flex items-center gap-2 text-sm font-medium text-gray-400 mb-3">
-                      <FiVideo className="text-purple-400" /> Short Video <span className="text-xs text-red-400 font-bold">(Required)</span>
+                      <FiVideo className="text-purple-400" /> Short Video{" "}
+                      <span className="text-xs text-red-400 font-bold">
+                        (Required)
+                      </span>
                     </label>
-                    <div className={`relative border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer group ${videoFile ? "border-purple-500/50 bg-purple-500/10" : "border-gray-700/80 hover:border-purple-500/50 hover:bg-gray-800/30"}`}>
-                      <input type="file" onChange={handleVideo} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" accept="video/*" />
+                    <div
+                      className={`relative border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer group ${videoFile ? "border-purple-500/50 bg-purple-500/10" : "border-gray-700/80 hover:border-purple-500/50 hover:bg-gray-800/30"}`}
+                    >
+                      <input
+                        type="file"
+                        onChange={handleVideo}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        accept="video/*"
+                      />
                       <div className="flex flex-col items-center justify-center">
                         {videoFile ? (
                           <>
                             <FiCheck className="text-3xl text-purple-400 mb-2 animate-bounce" />
-                            <span className="font-bold text-sm text-white break-all">{videoFile.name}</span>
+                            <span className="font-bold text-sm text-white break-all">
+                              {videoFile.name}
+                            </span>
                           </>
                         ) : (
                           <>
                             <FiVideo className="text-3xl text-gray-500 mb-2 group-hover:text-purple-400 transition-colors" />
-                            <span className="text-sm font-semibold text-gray-300">Upload Video appeal</span>
+                            <span className="text-sm font-semibold text-gray-300">
+                              Upload Video appeal
+                            </span>
                           </>
                         )}
                       </div>
@@ -510,7 +591,8 @@ const CampaignWizard = () => {
                   </div>
                   <div>
                     <label className="flex items-center gap-2 text-sm font-medium text-gray-400 mb-3">
-                      <FiYoutube className="text-red-500" /> YouTube Link <span className="text-xs text-gray-500">(Optional)</span>
+                      <FiYoutube className="text-red-500" /> YouTube Link{" "}
+                      <span className="text-xs text-gray-500">(Optional)</span>
                     </label>
                     <input
                       type="text"
@@ -522,10 +604,16 @@ const CampaignWizard = () => {
                     />
                   </div>
                   <div className="flex gap-4 mt-8">
-                    <button onClick={prevStep} className="flex-1 bg-gray-800/50 text-gray-300 py-4 rounded-xl hover:bg-gray-700/50 transition-all flex items-center justify-center gap-2 font-medium">
+                    <button
+                      onClick={prevStep}
+                      className="flex-1 bg-gray-800/50 text-gray-300 py-4 rounded-xl hover:bg-gray-700/50 transition-all flex items-center justify-center gap-2 font-medium"
+                    >
                       <FiChevronLeft className="text-xl" /> Back
                     </button>
-                    <button onClick={handleNext} className="flex-1 bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
+                    <button
+                      onClick={handleNext}
+                      className="flex-1 bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                    >
                       Continue <FiChevronRight className="text-xl" />
                     </button>
                   </div>
@@ -536,7 +624,9 @@ const CampaignWizard = () => {
               {step === 5 && (
                 <div className="space-y-8 animate-fade-in">
                   <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-2">Campaign Title</label>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                      Campaign Title
+                    </label>
                     <div className="flex gap-3">
                       <input
                         type="text"
@@ -551,19 +641,28 @@ const CampaignWizard = () => {
                         disabled={loading}
                         className="px-6 rounded-xl bg-purple-600 text-white font-bold hover:bg-purple-500 transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-purple-500/30"
                       >
-                        {loading ? <FiRefreshCw className="animate-spin" /> : <BsStars />} Suggest
+                        {loading ? (
+                          <FiRefreshCw className="animate-spin" />
+                        ) : (
+                          <BsStars />
+                        )}{" "}
+                        Suggest
                       </button>
                     </div>
                   </div>
 
                   {suggestedTitles.length > 0 && (
                     <div className="space-y-3">
-                      <p className="text-sm text-gray-400">AI Suggestions (Click to apply):</p>
+                      <p className="text-sm text-gray-400">
+                        AI Suggestions (Click to apply):
+                      </p>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {suggestedTitles.map((title, index) => (
                           <button
                             key={index}
-                            onClick={() => setFormData({ ...formData, title: title })}
+                            onClick={() =>
+                              setFormData({ ...formData, title: title })
+                            }
                             className="text-left p-3 rounded-lg bg-purple-900/20 border border-purple-500/30 text-purple-200 hover:bg-purple-600 hover:text-white transition-all text-sm font-medium"
                           >
                             {title}
@@ -574,138 +673,238 @@ const CampaignWizard = () => {
                   )}
 
                   <div className="flex gap-4 mt-8">
-                    <button onClick={prevStep} className="flex-1 bg-gray-800/50 text-gray-300 py-4 rounded-xl hover:bg-gray-700/50 transition-all flex items-center justify-center gap-2 font-medium">
+                    <button
+                      onClick={prevStep}
+                      className="flex-1 bg-gray-800/50 text-gray-300 py-4 rounded-xl hover:bg-gray-700/50 transition-all flex items-center justify-center gap-2 font-medium"
+                    >
                       <FiChevronLeft className="text-xl" /> Back
                     </button>
-                    <button onClick={handleNext} className="flex-1 bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
+                    <button
+                      onClick={handleNext}
+                      className="flex-1 bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                    >
                       Review <FiChevronRight className="text-xl" />
                     </button>
                   </div>
                 </div>
-
               )}
 
               {/* STEP 6: MILESTONES (NEW) */}
               {step === 6 && (
                 <div className="space-y-8 animate-fade-in">
-                    <div className="bg-gray-800/40 p-6 rounded-2xl border border-gray-700/50">
-                        <h3 className="text-xl font-bold text-white mb-4">
-                            {editingIndex >= 0 ? "Edit Milestone" : "Add a Milestone"}
-                        </h3>
-                        <div className="space-y-4">
-                            <input 
-                                type="text" 
-                                placeholder="Milestone Title (e.g. Initial Surgery)"
-                                value={mInput.title}
-                                onChange={(e) => setMInput({ ...mInput, title: e.target.value })}
-                                className="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg text-white"
-                            />
-                            <div className="flex gap-4">
-                                <input 
-                                    type="number" 
-                                    placeholder="Amount ($)"
-                                    value={mInput.amount}
-                                    onChange={(e) => setMInput({ ...mInput, amount: e.target.value })}
-                                    className="w-1/3 p-3 bg-gray-900 border border-gray-700 rounded-lg text-white"
-                                    onWheel={(e) => e.target.blur()} 
-                                />
-                                <input 
-                                    type="text" 
-                                    placeholder="Description (Optional)"
-                                    value={mInput.description}
-                                    onChange={(e) => setMInput({ ...mInput, description: e.target.value })}
-                                    className="flex-1 p-3 bg-gray-900 border border-gray-700 rounded-lg text-white"
-                                />
-                            </div>
-                            <div className="flex gap-2">
-                                <button 
-                                    onClick={() => {
-                                        if(!mInput.title || !mInput.amount) return toast.warning("Title and Amount required");
-                                        
-                                        const newMs = [...formData.milestones];
-                                        if (editingIndex >= 0) {
-                                            newMs[editingIndex] = mInput;
-                                            setEditingIndex(-1);
-                                        } else {
-                                            newMs.push(mInput);
-                                        }
+                  <div className="bg-gray-800/40 p-6 rounded-2xl border border-gray-700/50">
+                    <h3 className="text-xl font-bold text-white mb-4">
+                      {editingIndex >= 0 ? "Edit Milestone" : "Add a Milestone"}
+                    </h3>
+                    <div className="space-y-4">
+                      <input
+                        type="text"
+                        placeholder="Milestone Title (e.g. Initial Surgery)"
+                        value={mInput.title}
+                        onChange={(e) =>
+                          setMInput({ ...mInput, title: e.target.value })
+                        }
+                        className="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                      />
+                      <div className="flex gap-4">
+                        <input
+                          type="number"
+                          placeholder={`Amount (max ${remainingForMilestones.toLocaleString() || 0})`}
+                          value={mInput.amount}
+                          onChange={(e) =>
+                            setMInput({ ...mInput, amount: e.target.value })
+                          }
+                          className="w-1/3 p-3 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                          onWheel={(e) => e.target.blur()}
+                        />
+                        <input
+                          type="text"
+                          placeholder="Description (Optional)"
+                          value={mInput.description}
+                          onChange={(e) =>
+                            setMInput({
+                              ...mInput,
+                              description: e.target.value,
+                            })
+                          }
+                          className="flex-1 p-3 bg-gray-900 border border-gray-700 rounded-lg text-white"
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            if (!mInput.title || !mInput.amount)
+                              return toast.warning("Title and Amount required");
 
-                                        setFormData({ ...formData, milestones: newMs });
-                                        setMInput({ title: "", amount: "", description: "" });
-                                    }}
-                                    className={`flex-1 py-3 font-bold rounded-lg border transition ${
-                                        editingIndex >= 0 
-                                         ? "bg-yellow-600/20 text-yellow-400 border-yellow-500/30 hover:bg-yellow-600 hover:text-white"
-                                         : "bg-emerald-600/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-600 hover:text-white"
-                                    }`}
-                                >
-                                    {editingIndex >= 0 ? "Update Milestone" : "+ Add Milestone"}
-                                </button>
-                                {editingIndex >= 0 && (
-                                    <button 
-                                        onClick={() => {
-                                            setEditingIndex(-1);
-                                            setMInput({ title: "", amount: "", description: "" });
-                                        }}
-                                        className="px-6 py-3 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600"
-                                    >
-                                        Cancel
-                                    </button>
-                                )}
-                            </div>
+                            const numericAmount = Number(mInput.amount);
+                            if (numericAmount <= 0)
+                              return toast.warning(
+                                "Amount must be greater than 0",
+                              );
+                            if (numericAmount > goalAmount)
+                              return toast.warning(
+                                "Milestone exceeds total goal",
+                              );
+
+                            const projectedTotal =
+                              milestoneTotal -
+                              (editingIndex >= 0
+                                ? Number(
+                                    formData.milestones[editingIndex].amount ||
+                                      0,
+                                  )
+                                : 0) +
+                              numericAmount;
+                            if (projectedTotal > goalAmount) {
+                              return toast.warning(
+                                "Milestones total cannot exceed your goal",
+                              );
+                            }
+
+                            const newMs = [...formData.milestones];
+                            const payload = {
+                              ...mInput,
+                              amount: numericAmount,
+                            };
+                            if (editingIndex >= 0) {
+                              newMs[editingIndex] = payload;
+                              setEditingIndex(-1);
+                            } else {
+                              newMs.push(payload);
+                            }
+
+                            setFormData({ ...formData, milestones: newMs });
+                            setMInput({
+                              title: "",
+                              amount: "",
+                              description: "",
+                            });
+                          }}
+                          className={`flex-1 py-3 font-bold rounded-lg border transition ${
+                            editingIndex >= 0
+                              ? "bg-yellow-600/20 text-yellow-400 border-yellow-500/30 hover:bg-yellow-600 hover:text-white"
+                              : "bg-emerald-600/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-600 hover:text-white"
+                          }`}
+                        >
+                          {editingIndex >= 0
+                            ? "Update Milestone"
+                            : "+ Add Milestone"}
+                        </button>
+                        {editingIndex >= 0 && (
+                          <button
+                            onClick={() => {
+                              setEditingIndex(-1);
+                              setMInput({
+                                title: "",
+                                amount: "",
+                                description: "",
+                              });
+                            }}
+                            className="px-6 py-3 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600"
+                          >
+                            Cancel
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* SUMMARY + LIST */}
+                  <div className="grid md:grid-cols-3 gap-3">
+                    <div className="p-4 rounded-xl bg-black/40 border border-gray-700 text-white">
+                      <p className="text-xs uppercase text-gray-400 font-bold">
+                        Goal
+                      </p>
+                      <p className="text-2xl font-extrabold">
+                        ৳{goalAmount.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-black/40 border border-gray-700 text-white">
+                      <p className="text-xs uppercase text-gray-400 font-bold">
+                        Allocated to milestones
+                      </p>
+                      <p className="text-2xl font-extrabold text-amber-400">
+                        ৳{milestoneTotal.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-black/40 border border-gray-700 text-white">
+                      <p className="text-xs uppercase text-gray-400 font-bold">
+                        Remaining to assign
+                      </p>
+                      <p className="text-2xl font-extrabold text-emerald-400">
+                        ৳{remainingForMilestones.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* LIST */}
+                  <div className="space-y-3">
+                    {formData.milestones.map((m, idx) => (
+                      <div
+                        key={idx}
+                        className={`flex justify-between items-center p-4 rounded-xl border transition-all ${
+                          editingIndex === idx
+                            ? "bg-yellow-900/20 border-yellow-500/50"
+                            : "bg-gray-800 border-gray-700 hover:border-gray-600"
+                        }`}
+                      >
+                        <div>
+                          <h4 className="font-bold text-white">{m.title}</h4>
+                          <p className="text-sm text-gray-400">
+                            {m.description} •{" "}
+                            <span className="text-emerald-400">
+                              ৳{m.amount}
+                            </span>
+                          </p>
                         </div>
-                    </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => {
+                              setMInput(m);
+                              setEditingIndex(idx);
+                            }}
+                            className="p-2 text-blue-400 hover:text-blue-300 bg-blue-500/10 rounded-lg hover:bg-blue-500/20"
+                          >
+                            <FiEdit3 />
+                          </button>
+                          <button
+                            onClick={() => {
+                              const newM = [...formData.milestones];
+                              newM.splice(idx, 1);
+                              setFormData({ ...formData, milestones: newM });
+                              // Provide feedback if deleting currently edited item
+                              if (editingIndex === idx) {
+                                setEditingIndex(-1);
+                                setMInput({
+                                  title: "",
+                                  amount: "",
+                                  description: "",
+                                });
+                              }
+                            }}
+                            className="p-2 text-red-400 hover:text-red-300 bg-red-500/10 rounded-lg hover:bg-red-500/20"
+                          >
+                            <FiTrash2 />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
 
-                    {/* LIST */}
-                    <div className="space-y-3">
-                        {formData.milestones.map((m, idx) => (
-                            <div key={idx} className={`flex justify-between items-center p-4 rounded-xl border transition-all ${
-                                editingIndex === idx 
-                                    ? "bg-yellow-900/20 border-yellow-500/50" 
-                                    : "bg-gray-800 border-gray-700 hover:border-gray-600"
-                            }`}>
-                                <div>
-                                    <h4 className="font-bold text-white">{m.title}</h4>
-                                    <p className="text-sm text-gray-400">{m.description} • <span className="text-emerald-400">${m.amount}</span></p>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <button 
-                                        onClick={() => {
-                                            setMInput(m);
-                                            setEditingIndex(idx);
-                                        }}
-                                        className="p-2 text-blue-400 hover:text-blue-300 bg-blue-500/10 rounded-lg hover:bg-blue-500/20"
-                                    >
-                                        <FiEdit3 />
-                                    </button>
-                                    <button 
-                                        onClick={() => {
-                                            const newM = [...formData.milestones];
-                                            newM.splice(idx, 1);
-                                            setFormData({...formData, milestones: newM});
-                                            // Provide feedback if deleting currently edited item
-                                            if (editingIndex === idx) {
-                                                setEditingIndex(-1);
-                                                setMInput({ title: "", amount: "", description: "" });
-                                            }
-                                        }}
-                                        className="p-2 text-red-400 hover:text-red-300 bg-red-500/10 rounded-lg hover:bg-red-500/20"
-                                    >
-                                        <FiTrash2 />
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="flex gap-4 mt-8">
-                        <button onClick={prevStep} className="flex-1 bg-gray-800/50 text-gray-300 py-4 rounded-xl hover:bg-gray-700/50 transition-all flex items-center justify-center gap-2 font-medium">
-                        <FiChevronLeft className="text-xl" /> Back
-                        </button>
-                        <button onClick={handleNext} className="flex-1 bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
-                        Review <FiChevronRight className="text-xl" />
-                        </button>
-                    </div>
+                  <div className="flex gap-4 mt-8">
+                    <button
+                      onClick={prevStep}
+                      className="flex-1 bg-gray-800/50 text-gray-300 py-4 rounded-xl hover:bg-gray-700/50 transition-all flex items-center justify-center gap-2 font-medium"
+                    >
+                      <FiChevronLeft className="text-xl" /> Back
+                    </button>
+                    <button
+                      onClick={handleNext}
+                      className="flex-1 bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                    >
+                      Review <FiChevronRight className="text-xl" />
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -714,49 +913,82 @@ const CampaignWizard = () => {
                 <div className="space-y-8">
                   <div className="bg-gray-800/40 p-8 rounded-2xl border border-gray-700/50 space-y-6">
                     <div>
-                      <h4 className="text-sm font-medium text-emerald-400 uppercase tracking-wider mb-1">Title</h4>
-                      <p className="text-2xl font-bold text-white">{formData.title}</p>
+                      <h4 className="text-sm font-medium text-emerald-400 uppercase tracking-wider mb-1">
+                        Title
+                      </h4>
+                      <p className="text-2xl font-bold text-white">
+                        {formData.title}
+                      </p>
                     </div>
                     <div className="grid grid-cols-2 gap-6">
                       <div>
-                        <h4 className="text-sm font-medium text-emerald-400 uppercase tracking-wider mb-1">Goal</h4>
-                        <p className="text-xl font-semibold text-white">${formData.targetAmount}</p>
+                        <h4 className="text-sm font-medium text-emerald-400 uppercase tracking-wider mb-1">
+                          Goal
+                        </h4>
+                        <p className="text-xl font-semibold text-white">
+                          ${formData.targetAmount}
+                        </p>
                       </div>
                       <div>
-                        <h4 className="text-sm font-medium text-emerald-400 uppercase tracking-wider mb-1">Category</h4>
-                        <p className="text-xl font-semibold text-white">{formData.category}</p>
+                        <h4 className="text-sm font-medium text-emerald-400 uppercase tracking-wider mb-1">
+                          Category
+                        </h4>
+                        <p className="text-xl font-semibold text-white">
+                          {formData.category}
+                        </p>
                       </div>
                     </div>
-                    
+
                     {/* MILESTONES REVIEW */}
                     <div>
-                        <h4 className="text-sm font-medium text-emerald-400 uppercase tracking-wider mb-2">Milestones ({formData.milestones.length})</h4>
-                        {formData.milestones.length > 0 ? (
-                            <div className="bg-black/30 rounded-xl border border-white/5 overflow-hidden">
-                                {formData.milestones.map((m, idx) => (
-                                    <div key={idx} className="p-3 border-b border-white/5 last:border-b-0 flex justify-between">
-                                        <span className="text-gray-300 font-medium">{m.title}</span>
-                                        <span className="text-emerald-400 font-bold">${m.amount}</span>
-                                    </div>
-                                ))}
+                      <h4 className="text-sm font-medium text-emerald-400 uppercase tracking-wider mb-2">
+                        Milestones ({formData.milestones.length})
+                      </h4>
+                      {formData.milestones.length > 0 ? (
+                        <div className="bg-black/30 rounded-xl border border-white/5 overflow-hidden">
+                          {formData.milestones.map((m, idx) => (
+                            <div
+                              key={idx}
+                              className="p-3 border-b border-white/5 last:border-b-0 flex justify-between"
+                            >
+                              <span className="text-gray-300 font-medium">
+                                {m.title}
+                              </span>
+                              <span className="text-emerald-400 font-bold">
+                                ${m.amount}
+                              </span>
                             </div>
-                        ) : (
-                            <p className="text-gray-500 italic">No milestones added.</p>
-                        )}
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 italic">
+                          No milestones added.
+                        </p>
+                      )}
                     </div>
 
                     <div>
-                      <h4 className="text-sm font-medium text-emerald-400 uppercase tracking-wider mb-2">Story</h4>
+                      <h4 className="text-sm font-medium text-emerald-400 uppercase tracking-wider mb-2">
+                        Story
+                      </h4>
                       <div className="p-5 bg-black/30 rounded-xl border border-white/5 max-h-60 overflow-y-auto">
-                        <p className="text-gray-300 leading-relaxed whitespace-pre-line">{formData.description}</p>
+                        <p className="text-gray-300 leading-relaxed whitespace-pre-line">
+                          {formData.description}
+                        </p>
                       </div>
                     </div>
                   </div>
                   <div className="flex gap-4 mt-8">
-                    <button onClick={prevStep} className="flex-1 bg-gray-800/50 text-gray-300 py-4 rounded-xl hover:bg-gray-700/50 transition-all flex items-center justify-center gap-2 font-medium">
+                    <button
+                      onClick={prevStep}
+                      className="flex-1 bg-gray-800/50 text-gray-300 py-4 rounded-xl hover:bg-gray-700/50 transition-all flex items-center justify-center gap-2 font-medium"
+                    >
                       <FiChevronLeft className="text-xl" /> Edit
                     </button>
-                    <button onClick={handleSubmit} className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-500/30 hover:from-emerald-500 hover:to-teal-500 transition-all flex items-center justify-center gap-2">
+                    <button
+                      onClick={handleSubmit}
+                      className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-500/30 hover:from-emerald-500 hover:to-teal-500 transition-all flex items-center justify-center gap-2"
+                    >
                       🚀 Launch Fundraiser
                     </button>
                   </div>

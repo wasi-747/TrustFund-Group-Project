@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const Campaign = require("../models/Campaign");
 const User = require("../models/User"); // 👈 IMPORT USER MODEL
+const Transaction = require("../models/Transaction");
 const upload = require("../middleware/upload");
 
 // @route   POST /api/campaigns/create
@@ -21,7 +22,8 @@ router.post(
 
       console.log("📝 Creating Campaign for User:", req.user.id);
       console.log("📦 Body Keys:", Object.keys(req.body));
-      if (req.body.milestones) console.log("🥅 Milestones Raw:", req.body.milestones);
+      if (req.body.milestones)
+        console.log("🥅 Milestones Raw:", req.body.milestones);
 
       // 👇 NEW SECURITY CHECK: VERIFICATION
       const user = await User.findById(req.user.id);
@@ -60,17 +62,17 @@ router.post(
       // 🛑 HANDLE MILESTONES (Parse JSON string if sent as FormData)
       if (req.body.milestones) {
         try {
-            const milestones = JSON.parse(req.body.milestones);
-            if (Array.isArray(milestones)) {
-                newCampaign.milestones = milestones.map(m =>({
-                    title: m.title,
-                    amount: Number(m.amount),
-                    description: m.description,
-                    status: "locked"
-                }));
-            }
+          const milestones = JSON.parse(req.body.milestones);
+          if (Array.isArray(milestones)) {
+            newCampaign.milestones = milestones.map((m) => ({
+              title: m.title,
+              amount: Number(m.amount),
+              description: m.description,
+              status: "locked",
+            }));
+          }
         } catch (e) {
-            console.error("Failed to parse milestones:", e);
+          console.error("Failed to parse milestones:", e);
         }
       }
 
@@ -80,7 +82,7 @@ router.post(
       console.error(err);
       res.status(500).send("Server Error: " + err.message);
     }
-  }
+  },
 );
 
 // @route   GET /api/campaigns/all
@@ -99,7 +101,7 @@ router.get("/:id", async (req, res) => {
   try {
     const campaign = await Campaign.findById(req.params.id).populate(
       "owner",
-      "name email"
+      "name email",
     );
     if (!campaign) return res.status(404).json({ msg: "Campaign not found" });
     res.json(campaign);
@@ -147,8 +149,7 @@ router.put(
         : req.body.proofUrl; // Fallback if just sending a link
 
       const campaign = await Campaign.findById(campaignId);
-      if (!campaign)
-        return res.status(404).json({ msg: "Campaign not found" });
+      if (!campaign) return res.status(404).json({ msg: "Campaign not found" });
 
       if (campaign.owner.toString() !== req.user.id) {
         return res.status(401).json({ msg: "Not authorized" });
@@ -169,8 +170,7 @@ router.put(
       console.error(err.message);
       res.status(500).send("Server Error");
     }
-  }
-
+  },
 );
 
 // @route   POST /api/campaigns/donate/:id
@@ -185,18 +185,26 @@ router.post("/donate/:id", async (req, res) => {
       return res.status(404).json({ msg: "Campaign not found" });
     }
 
-    // Update amount
-    // In a real app, this would happen AFTER payment gateway confirmation
-    campaign.currentAmount = (campaign.currentAmount || 0) + Number(amount);
+    const numericAmount = Number(amount) || 0;
+
+    // Update amounts (would be post-payment confirmation in production)
+    campaign.currentAmount = (campaign.currentAmount || 0) + numericAmount;
+
+    // Wallet accounting: donations land in locked escrow first
+    campaign.wallet = campaign.wallet || {};
+    campaign.wallet.totalRaised =
+      (campaign.wallet.totalRaised || 0) + numericAmount;
+    campaign.wallet.lockedAmount =
+      (campaign.wallet.lockedAmount || 0) + numericAmount;
 
     // Add to history
     const newDonation = {
-        name: name || "Anonymous",
-        amount: Number(amount),
-        message,
-        date: new Date()
+      name: name || "Anonymous",
+      amount: numericAmount,
+      message,
+      date: new Date(),
     };
-    
+
     // Add user ID if authenticated (optional, depends on how you handle this)
     // if(req.user) newDonation.user = req.user.id;
 
@@ -208,9 +216,13 @@ router.post("/donate/:id", async (req, res) => {
     // ⚡ REAL-TIME: Emit Event
     const io = req.app.get("io");
     if (io) {
-      io.emit("new_donation", { 
-          campaignId: campaign._id, 
-          donation: newDonation 
+      io.emit("new_donation", {
+        campaignId: campaign._id,
+        donation: newDonation,
+      });
+      io.emit("donation_received", {
+        campaignId: campaign._id,
+        amount: numericAmount,
       });
     }
 
@@ -221,15 +233,14 @@ router.post("/donate/:id", async (req, res) => {
   }
 });
 
-
 // @route   POST /api/campaigns/withdraw
 // @desc    Withdraw released funds (Dummy Implementation)
 // @access  Private (Owner Only)
-router.post("/withdraw", auth, async (req, res) => {
-  const { campaignId, amount } = req.body;
+router.post("/:id/withdraw", auth, async (req, res) => {
+  const { amount, method = "Unknown", accountNumber } = req.body;
 
   try {
-    const campaign = await Campaign.findById(campaignId);
+    const campaign = await Campaign.findById(req.params.id);
     if (!campaign) {
       return res.status(404).json({ msg: "Campaign not found" });
     }
@@ -238,30 +249,57 @@ router.post("/withdraw", auth, async (req, res) => {
       return res.status(401).json({ msg: "Not authorized" });
     }
 
-    const withdrawAmount = Number(amount);
+    const user = await User.findById(req.user.id);
+    const isKycOk = user?.isVerified || user?.verificationStatus === "approved";
+    if (!isKycOk) {
+      return res
+        .status(403)
+        .json({ msg: "Account verification required before withdrawals" });
+    }
+
+    const withdrawAmount = Number(amount) || 0;
     if (withdrawAmount <= 0) {
       return res.status(400).json({ msg: "Amount must be positive" });
     }
 
-    const available = (campaign.releasedAmount || 0) - (campaign.withdrawnAmount || 0);
+    campaign.wallet = campaign.wallet || {};
+    const available = campaign.wallet.availableBalance || 0;
     if (withdrawAmount > available) {
-      return res.status(400).json({ msg: "Insufficient funds released for withdrawal" });
+      return res.status(400).json({ msg: "Insufficient available balance" });
     }
 
-    campaign.withdrawnAmount = (campaign.withdrawnAmount || 0) + withdrawAmount;
+    // Atomically adjust wallet balances
+    campaign.wallet.availableBalance = available - withdrawAmount;
+    campaign.wallet.totalWithdrawn =
+      (campaign.wallet.totalWithdrawn || 0) + withdrawAmount;
+    campaign.withdrawnAmount = (campaign.withdrawnAmount || 0) + withdrawAmount; // legacy
+
+    const trxId = `TRX-SSL-${Math.floor(Math.random() * 9000 + 1000)}`;
+
+    // Persist transaction record
+    await Transaction.create({
+      campaign: campaign._id,
+      user: req.user.id,
+      type: "Withdrawal",
+      method,
+      amount: withdrawAmount,
+      status: "Completed",
+      reference: trxId,
+    });
+
     await campaign.save();
 
-    // ⚡ REAL-TIME: Emit Event
     const io = req.app.get("io");
     if (io) {
-      io.emit("funds_withdrawn", { 
-          campaignId: campaign._id, 
-          amount: withdrawAmount,
-          withdrawnAmount: campaign.withdrawnAmount
+      io.emit("funds_withdrawn", {
+        campaignId: campaign._id,
+        amount: withdrawAmount,
+        withdrawnAmount: campaign.withdrawnAmount,
+        wallet: campaign.wallet,
       });
     }
 
-    res.json(campaign);
+    res.json({ success: true, trxId, campaign });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");

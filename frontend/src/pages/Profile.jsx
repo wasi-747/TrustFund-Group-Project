@@ -251,25 +251,40 @@ const ProfileStrengthCircle = ({ percentage, missing }) => {
     safePercentage < 40
       ? "#ef4444"
       : safePercentage < 80
-      ? "#eab308"
-      : "#10b981";
+        ? "#eab308"
+        : "#10b981";
 
   return (
     <div className="relative flex items-center justify-center w-16 h-16 group cursor-help">
       <div className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 w-48 bg-gray-900/95 backdrop-blur border border-gray-700 text-white text-xs p-3 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 z-50 pointer-events-none shadow-2xl transform translate-y-2 group-hover:translate-y-0">
         <div className="font-bold mb-2 border-b border-gray-700 pb-1 flex justify-between items-center">
-            <span>Completion</span>
-            <span className={safePercentage === 100 ? "text-emerald-400" : "text-white"}>{safePercentage}%</span>
+          <span>Completion</span>
+          <span
+            className={
+              safePercentage === 100 ? "text-emerald-400" : "text-white"
+            }
+          >
+            {safePercentage}%
+          </span>
         </div>
         {missing && missing.length > 0 ? (
-            <div className="space-y-1">
-                <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">Items to complete:</p>
-                <ul className="space-y-1 text-[10px] text-gray-300">
-                    {missing.map((item, i) => <li key={i} className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-red-400"></span> {item}</li>)}
-                </ul>
-            </div>
+          <div className="space-y-1">
+            <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">
+              Items to complete:
+            </p>
+            <ul className="space-y-1 text-[10px] text-gray-300">
+              {missing.map((item, i) => (
+                <li key={i} className="flex items-center gap-1.5">
+                  <span className="w-1 h-1 rounded-full bg-red-400"></span>{" "}
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : (
-            <p className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">🎉 100% Complete! Amazing!</p>
+          <p className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
+            🎉 100% Complete! Amazing!
+          </p>
         )}
         {/* Arrow */}
         <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-8 border-transparent border-t-gray-900/95"></div>
@@ -391,7 +406,7 @@ const Profile = () => {
             "x-auth-token": token,
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
       setUser(res.data);
       toast.success("Saved successfully!");
@@ -405,7 +420,7 @@ const Profile = () => {
   const saveBio = async () => {
     if (bioInput.trim().length < 20) {
       return toast.warn(
-        "Bio is too short! Please write at least 20 characters."
+        "Bio is too short! Please write at least 20 characters.",
       );
     }
     if (await handleUpdateProfile({ bio: bioInput })) setShowBioModal(false);
@@ -481,12 +496,12 @@ const Profile = () => {
     if (pendingUploads.avatar)
       formData.append(
         pendingUploads.avatar === "REMOVE" ? "removeAvatar" : "avatar",
-        pendingUploads.avatar === "REMOVE" ? "true" : pendingUploads.avatar
+        pendingUploads.avatar === "REMOVE" ? "true" : pendingUploads.avatar,
       );
     if (pendingUploads.cover)
       formData.append(
         pendingUploads.cover === "REMOVE" ? "removeCover" : "cover",
-        pendingUploads.cover === "REMOVE" ? "true" : pendingUploads.cover
+        pendingUploads.cover === "REMOVE" ? "true" : pendingUploads.cover,
       );
 
     try {
@@ -498,7 +513,7 @@ const Profile = () => {
             "x-auth-token": token,
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
       setUser(res.data);
       setPendingUploads({ cover: null, avatar: null });
@@ -541,9 +556,13 @@ const Profile = () => {
     if (!user.cover) missing.push("Upload Cover (+10%)");
     if (!user.bio || user.bio.length < 5) missing.push("Write Bio (+20%)");
     if (!user.topCauses?.length) missing.push("Select Causes (+15%)");
-    if (!user.socials || !Object.values(user.socials).some((v) => v?.length > 0))
+    if (
+      !user.socials ||
+      !Object.values(user.socials).some((v) => v?.length > 0)
+    )
       missing.push("Link Socials (+10%)");
-    if (!user.highlights?.pins?.length) missing.push("Add Check/Highlight (+15%)");
+    if (!user.highlights?.pins?.length)
+      missing.push("Add Check/Highlight (+15%)");
     return missing;
   };
 
@@ -569,14 +588,14 @@ const Profile = () => {
     previews.cover && previews.cover !== "REMOVE"
       ? previews.cover
       : previews.cover === "REMOVE"
-      ? null
-      : user?.cover;
+        ? null
+        : user?.cover;
   const displayAvatar =
     previews.avatar && previews.avatar !== "REMOVE"
       ? previews.avatar
       : previews.avatar === "REMOVE"
-      ? null
-      : user?.avatar;
+        ? null
+        : user?.avatar;
 
   return (
     <div className="min-h-screen pt-20 pb-32 dark:bg-black bg-gray-50/30 dark:text-white text-gray-900 transition-colors duration-300">
@@ -669,7 +688,7 @@ const Profile = () => {
                       onClick={() => {
                         if (isSelected)
                           setSelectedCauses(
-                            selectedCauses.filter((c) => c !== cause.id)
+                            selectedCauses.filter((c) => c !== cause.id),
                           );
                         else {
                           if (selectedCauses.length >= 3)
@@ -1144,7 +1163,10 @@ const Profile = () => {
           )}
 
           <div className="flex justify-center mb-6">
-            <ProfileStrengthCircle percentage={calculateStrength()} missing={getMissingItems()} />
+            <ProfileStrengthCircle
+              percentage={calculateStrength()}
+              missing={getMissingItems()}
+            />
           </div>
 
           <button
@@ -1309,7 +1331,7 @@ const Profile = () => {
                       <button
                         onClick={() => {
                           const newPins = user.highlights.pins.filter(
-                            (p) => p.id !== pin.id
+                            (p) => p.id !== pin.id,
                           );
                           handleUpdateProfile({
                             highlights: { ...user.highlights, pins: newPins },
@@ -1367,7 +1389,7 @@ const Profile = () => {
                       <button
                         onClick={() => {
                           const newLinks = user.highlights.links.filter(
-                            (l) => l.id !== link.id
+                            (l) => l.id !== link.id,
                           );
                           handleUpdateProfile({
                             highlights: { ...user.highlights, links: newLinks },
@@ -1419,8 +1441,8 @@ const Profile = () => {
                 p.id === "instagram"
                   ? `https://instagram.com/${link}`
                   : p.id === "twitter"
-                  ? `https://x.com/${link}`
-                  : link;
+                    ? `https://x.com/${link}`
+                    : link;
               return (
                 <a
                   key={p.id}

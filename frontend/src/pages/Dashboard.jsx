@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CampaignCard from "../components/CampaignCard";
-import { Link, useNavigate } from "react-router-dom";
-import { io } from "socket.io-client";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import socket from "../utils/socket";
 import {
   FiTrash2,
   FiSearch,
@@ -13,12 +13,17 @@ import {
 } from "react-icons/fi";
 
 const Dashboard = () => {
+  const [searchParams] = useSearchParams();
+  const categoryFromUrl = searchParams.get("category") || "";
+  
   const [campaigns, setCampaigns] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(categoryFromUrl);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const navigate = useNavigate();
+
+  const categoryTags = ["Medical", "Emergency", "Education", "Nonprofit"];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,15 +40,15 @@ const Dashboard = () => {
             console.log("Session expired or auth failed", e);
             // Optionally remove token if invalid
             if (e.response && e.response.status === 401) {
-             // localStorage.removeItem("token");
+              // localStorage.removeItem("token");
             }
           }
         }
-        
+
         console.log("Fetching campaigns...");
         const res = await axios.get("/api/campaigns/all");
         console.log("Campaigns fetched:", res.data?.length);
-        
+
         if (Array.isArray(res.data)) {
           setCampaigns(res.data);
         } else {
@@ -61,19 +66,62 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    const socket = io("http://localhost:5000", {
-      transports: ["websocket", "polling"],
-    });
-    socket.on("donation_received", (data) => {
+    const handleDonation = (data) => {
       setCampaigns((prev) =>
         prev.map((c) =>
           c._id === data.campaignId
             ? { ...c, currentAmount: c.currentAmount + data.amount }
-            : c
-        )
+            : c,
+        ),
       );
-    });
-    return () => socket.disconnect();
+      toast.success(`🎉 New donation arrived (৳${data.amount})`);
+    };
+
+    const handleWithdrawn = (data) => {
+      setCampaigns((prev) =>
+        prev.map((c) =>
+          c._id === data.campaignId
+            ? {
+                ...c,
+                withdrawnAmount: data.withdrawnAmount,
+                wallet: data.wallet || c.wallet,
+              }
+            : c,
+        ),
+      );
+      toast.info(`💸 Withdrawal processed: ৳${data.amount}`);
+    };
+
+    const handleMilestone = (data) => {
+      if (data.status === "approved") {
+        setCampaigns((prev) =>
+          prev.map((c) =>
+            c._id === data.campaignId
+              ? {
+                  ...c,
+                  releasedAmount: (c.releasedAmount || 0) + (data.amount || 0),
+                  wallet: data.wallet || c.wallet,
+                }
+              : c,
+          ),
+        );
+        toast.success(`✅ Milestone approved for a campaign. Funds released.`);
+      }
+
+      if (data.status === "rejected") {
+        toast.error("❌ A milestone proof was rejected.");
+      }
+    };
+
+    socket.on("donation_received", handleDonation);
+    socket.on("funds_withdrawn", handleWithdrawn);
+    socket.on("milestone_updated", handleMilestone);
+
+    return () => {
+      socket.off("donation_received", handleDonation);
+      socket.off("funds_withdrawn", handleWithdrawn);
+      socket.off("milestone_updated", handleMilestone);
+    };
   }, []);
 
   const handleDeleteClick = (id) => setDeleteId(id);
@@ -94,9 +142,19 @@ const Dashboard = () => {
     }
   };
 
-  const filteredCampaigns = campaigns.filter((camp) =>
-    camp.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const searchLower = searchTerm.toLowerCase();
+  const normalizedSearch = searchLower.replace(/\s+/g, "");
+
+  const filteredCampaigns = campaigns.filter((camp) => {
+    const title = (camp.title || "").toLowerCase();
+    const category = (camp.category || "").toLowerCase();
+    const normalizedCategory = category.replace(/\s+/g, "");
+    return (
+      title.includes(searchLower) ||
+      category.includes(searchLower) ||
+      normalizedCategory.includes(normalizedSearch)
+    );
+  });
 
   return (
     <div className="pt-32 px-6 pb-20 max-w-7xl mx-auto min-h-screen">
@@ -134,15 +192,28 @@ const Dashboard = () => {
         </div>
 
         <div className="w-full md:w-auto flex gap-4 items-center">
-          <div className="relative md:w-80 w-full">
-            <FiSearch className="absolute left-3 top-3.5 text-gray-500" />
-            <input
-              type="text"
-              placeholder="Search campaigns..."
-              className="p-3 pl-10 w-full dark:bg-white/5 bg-white border dark:border-white/10 border-gray-200 dark:text-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors rounded-lg shadow-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          <div className="md:w-80 w-full">
+            <div className="relative">
+              <FiSearch className="absolute left-3 top-3.5 text-gray-500" />
+              <input
+                type="text"
+                placeholder="Search campaigns..."
+                className="p-3 pl-10 w-full dark:bg-white/5 bg-white border dark:border-white/10 border-gray-200 dark:text-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors rounded-lg shadow-sm"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-wrap gap-2 mt-3">
+              {categoryTags.map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => setSearchTerm(tag)}
+                  className="text-xs font-bold px-3 py-1 rounded-full border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 transition"
+                >
+                  #{tag === "Nonprofit" ? "Non Profit" : tag}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

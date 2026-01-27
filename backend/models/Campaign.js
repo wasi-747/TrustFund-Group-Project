@@ -37,10 +37,16 @@ const CampaignSchema = new mongoose.Schema({
     enum: ["active", "paused", "completed", "banned"],
     default: "active",
   },
-  
+
   // Milestone Escrow
   releasedAmount: { type: Number, default: 0 },
-  withdrawnAmount: { type: Number, default: 0 }, // NEW: Track withdrawals
+  withdrawnAmount: { type: Number, default: 0 }, // Legacy tracking
+  wallet: {
+    totalRaised: { type: Number, default: 0 },
+    lockedAmount: { type: Number, default: 0 },
+    availableBalance: { type: Number, default: 0 },
+    totalWithdrawn: { type: Number, default: 0 },
+  },
   milestones: [
     {
       title: { type: String, required: true },
@@ -61,12 +67,12 @@ const CampaignSchema = new mongoose.Schema({
   // Donation History (Transparency)
   donators: [
     {
-        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // If logged in
-        name: { type: String, default: "Anonymous" },
-        amount: { type: Number, required: true },
-        message: { type: String },
-        date: { type: Date, default: Date.now }
-    }
+      user: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // If logged in
+      name: { type: String, default: "Anonymous" },
+      amount: { type: Number, required: true },
+      message: { type: String },
+      date: { type: Date, default: Date.now },
+    },
   ],
 
   date: { type: Date, default: Date.now },

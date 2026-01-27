@@ -37,9 +37,9 @@ router.post("/submit", auth, upload.single("nidImage"), async (req, res) => {
       phone,
       address,
       nidImage: `http://localhost:5000/uploads/${req.file.filename}`, // Store full URL or relative path
+      submittedAt: Date.now(),
     };
     user.verificationStatus = "pending";
-    user.submittedAt = Date.now();
 
     await user.save();
 

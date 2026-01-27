@@ -134,19 +134,45 @@ const Navbar = () => {
                 {activeMenu === "donate" && (
                   <div className="absolute top-16 left-0 w-[500px] dark:bg-black/95 bg-white border dark:border-emerald-500/20 border-gray-100 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.2)] dark:shadow-[0_0_40px_rgba(16,185,129,0.1)] p-6 animate-in fade-in slide-in-from-top-2 z-50 backdrop-blur-xl">
                     <div className="flex items-center gap-2 dark:text-white text-gray-900 font-bold mb-4 pb-2 border-b dark:border-white/10 border-gray-100">
-                      <FiHeart className="text-emerald-500" /> Discover fundraisers
-                      to support
+                      <FiHeart className="text-emerald-500" /> Discover
+                      fundraisers to support
                     </div>
                     <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-4">
-                        <a href="#" className="block group">
+                        <Link to="/discover" onClick={() => setActiveMenu(null)} className="block group">
                           <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
                             Categories
                           </p>
                           <p className="text-xs text-gray-500 dark:text-gray-400">
                             Browse fundraisers by category
                           </p>
-                        </a>
+                        </Link>
+                        <Link to="/crisis-relief" onClick={() => setActiveMenu(null)} className="block group">
+                          <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
+                            Crisis relief
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Donate to verified relief
+                          </p>
+                        </Link>
+                      </div>
+                      <div className="space-y-4">
+                        <Link to="/social-impact-funds" onClick={() => setActiveMenu(null)} className="block group">
+                          <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
+                            Social Impact Funds
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Direct support for urgent needs
+                          </p>
+                        </Link>
+                        <Link to="/supporter-space" onClick={() => setActiveMenu(null)} className="block group">
+                          <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
+                            Supporter Space
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Inspiration, FAQs, and where to give
+                          </p>
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -176,11 +202,82 @@ const Navbar = () => {
                 </button>
                 {/* ... existing dropdow content ... (simplified for replacement) */}
                 {activeMenu === "fundraise" && (
-                   <div className="absolute top-16 left-0 w-[600px] dark:bg-black/95 bg-white border dark:border-emerald-500/20 border-gray-100 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.2)] dark:shadow-[0_0_40px_rgba(16,185,129,0.1)] p-6 animate-in fade-in slide-in-from-top-2 z-50 backdrop-blur-xl">
+                  <div className="absolute top-16 left-0 w-[600px] dark:bg-black/95 bg-white border dark:border-emerald-500/20 border-gray-100 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.2)] dark:shadow-[0_0_40px_rgba(16,185,129,0.1)] p-6 animate-in fade-in slide-in-from-top-2 z-50 backdrop-blur-xl">
                     <div className="flex items-center gap-2 dark:text-white text-gray-900 font-bold mb-4 pb-2 border-b dark:border-white/10 border-gray-100">
-                      <FiActivity className="text-emerald-500" /> Start fundraising
+                      <FiActivity className="text-emerald-500" /> Start
+                      fundraising, tips, and resources
                     </div>
-                   </div>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <Link to="/how-to-start" onClick={() => setActiveMenu(null)} className="block group">
+                          <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
+                            How to start a TrustFund
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Step-by-step help, examples, and more
+                          </p>
+                        </Link>
+                        <Link to="/fundraising-categories" onClick={() => setActiveMenu(null)} className="block group">
+                          <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
+                            Fundraising categories
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Find the right category for you
+                          </p>
+                        </Link>
+                        <Link to="/team-fundraising" onClick={() => setActiveMenu(null)} className="block group">
+                          <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
+                            Team fundraising
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Fundraise together with a team
+                          </p>
+                        </Link>
+                        <Link to="/fundraising-blog" onClick={() => setActiveMenu(null)} className="block group">
+                          <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
+                            Fundraising Blog
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Resources, tips, and more
+                          </p>
+                        </Link>
+                      </div>
+                      <div className="space-y-4">
+                        <Link to="/fundraising-tips" onClick={() => setActiveMenu(null)} className="block group">
+                          <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
+                            Fundraising tips
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            The ultimate fundraising tips guide
+                          </p>
+                        </Link>
+                        <Link to="/fundraising-ideas" onClick={() => setActiveMenu(null)} className="block group">
+                          <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
+                            Fundraising ideas
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Ideas to spark your creativity
+                          </p>
+                        </Link>
+                        <Link to="/charity-fundraising" onClick={() => setActiveMenu(null)} className="block group">
+                          <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
+                            Charity fundraising
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Fundraise for a charity
+                          </p>
+                        </Link>
+                        <Link to="/nonprofit-signup" onClick={() => setActiveMenu(null)} className="block group">
+                          <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
+                            Sign up as a nonprofit
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Claim your nonprofit
+                          </p>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
             </>
@@ -226,36 +323,57 @@ const Navbar = () => {
                         to="/profile"
                         className="text-sm text-emerald-500 hover:text-emerald-400 flex items-center gap-1 mt-1 transition-colors"
                       >
-                        {isAdminMode ? "Switch View in Profile" : "View Profile"} <FiChevronRight size={14} />
+                        {isAdminMode
+                          ? "Switch View in Profile"
+                          : "View Profile"}{" "}
+                        <FiChevronRight size={14} />
                       </Link>
                     </div>
 
                     {!isAdminMode && (
-                        <div className="px-6 py-4 border-b dark:border-white/10 border-gray-100 dark:bg-white/5 bg-gray-50">
+                      <div className="px-6 py-4 border-b dark:border-white/10 border-gray-100 dark:bg-white/5 bg-gray-50">
                         <h4 className="text-gray-500 text-xs uppercase font-bold tracking-wider mb-3">
-                            Your Impact
+                          Your Impact
                         </h4>
                         <Link
-                            to="/profile"
-                            className="flex items-center justify-between p-3 dark:bg-white/5 bg-white border dark:border-transparent border-gray-200 rounded-xl hover:shadow-md transition group"
+                          to="/profile"
+                          className="flex items-center justify-between p-3 dark:bg-white/5 bg-white border dark:border-transparent border-gray-200 rounded-xl hover:shadow-md transition group"
                         >
-                            <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-pink-500/10 text-pink-500 flex items-center justify-center">
-                                <FiHeart size={18} />
+                              <FiHeart size={18} />
                             </div>
                             <div>
-                                <p className="dark:text-white text-gray-900 font-bold">
+                              <p className="dark:text-white text-gray-900 font-bold">
                                 Donation History
-                                </p>
+                              </p>
                             </div>
-                            </div>
-                            <FiChevronRight className="text-gray-400 group-hover:text-emerald-500 transition" />
+                          </div>
+                          <FiChevronRight className="text-gray-400 group-hover:text-emerald-500 transition" />
                         </Link>
-                        </div>
+                      </div>
                     )}
-                    
+
                     <div className="py-2">
-                         {/* 👇 THEME SWITCHER */}
+                      {user?.isVerified && (
+                        <Link
+                          to="/settings"
+                          state={{ tab: "profile" }}
+                          className="w-full flex items-center justify-between px-6 py-3 dark:text-gray-300 text-gray-600 hover:bg-gray-100 dark:hover:bg-white/5 transition group"
+                          onClick={() => setActiveMenu(null)}
+                        >
+                          <span className="flex items-center gap-3">
+                            <FiSettings size={18} />
+                            Account Settings
+                          </span>
+                          <FiChevronRight
+                            className="text-gray-400 group-hover:text-emerald-500 transition"
+                            size={16}
+                          />
+                        </Link>
+                      )}
+
+                      {/* 👇 THEME SWITCHER */}
                       <button
                         onClick={cycleTheme}
                         className="w-full flex items-center justify-between px-6 py-3 dark:text-gray-300 text-gray-600 hover:bg-gray-100 dark:hover:bg-white/5 transition group"

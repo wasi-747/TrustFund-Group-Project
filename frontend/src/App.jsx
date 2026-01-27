@@ -34,6 +34,20 @@ import ResetPassword from "./pages/ResetPassword";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import AdminDashboard from "./pages/AdminDashboard";
+import Resources from "./pages/Resources";
+import Discover from "./pages/Discover";
+import SocialImpactFunds from "./pages/SocialImpactFunds";
+import CrisisRelief from "./pages/CrisisRelief";
+import SupporterSpace from "./pages/SupporterSpace";
+import HowToStart from "./pages/HowToStart";
+import FundraisingTips from "./pages/FundraisingTips";
+import FundraisingIdeas from "./pages/FundraisingIdeas";
+import FundraisingBlog from "./pages/FundraisingBlog";
+import FundraisingCategories from "./pages/FundraisingCategories";
+import TeamFundraising from "./pages/TeamFundraising";
+import CharityFundraising from "./pages/CharityFundraising";
+import NonprofitSignup from "./pages/NonprofitSignup";
+import Footer from "./components/Footer";
 
 const AppContent = () => {
   const { theme } = useTheme();
@@ -148,6 +162,122 @@ const AppContent = () => {
               }
             />
 
+            {/* Discover Page */}
+            <Route
+              path="/discover"
+              element={
+                <PageWrapper>
+                  <Discover />
+                </PageWrapper>
+              }
+            />
+
+            {/* Social Impact Funds Page */}
+            <Route
+              path="/social-impact-funds"
+              element={
+                <PageWrapper>
+                  <SocialImpactFunds />
+                </PageWrapper>
+              }
+            />
+
+            {/* Crisis Relief Page */}
+            <Route
+              path="/crisis-relief"
+              element={
+                <PageWrapper>
+                  <CrisisRelief />
+                </PageWrapper>
+              }
+            />
+
+            {/* Supporter Space Page */}
+            <Route
+              path="/supporter-space"
+              element={
+                <PageWrapper>
+                  <SupporterSpace />
+                </PageWrapper>
+              }
+            />
+
+            {/* Fundraise Dropdown Pages */}
+            <Route
+              path="/how-to-start"
+              element={
+                <PageWrapper>
+                  <HowToStart />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/fundraising-tips"
+              element={
+                <PageWrapper>
+                  <FundraisingTips />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/fundraising-ideas"
+              element={
+                <PageWrapper>
+                  <FundraisingIdeas />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/fundraising-blog"
+              element={
+                <PageWrapper>
+                  <FundraisingBlog />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/fundraising-categories"
+              element={
+                <PageWrapper>
+                  <FundraisingCategories />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/team-fundraising"
+              element={
+                <PageWrapper>
+                  <TeamFundraising />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/charity-fundraising"
+              element={
+                <PageWrapper>
+                  <CharityFundraising />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/nonprofit-signup"
+              element={
+                <PageWrapper>
+                  <NonprofitSignup />
+                </PageWrapper>
+              }
+            />
+
+            {/* Resources Routes */}
+            <Route
+              path="/resources/:section"
+              element={
+                <PageWrapper>
+                  <Resources />
+                </PageWrapper>
+              }
+            />
+
             {/* 🔒 ADMIN ROUTE (Protected) */}
             <Route element={<AdminRoute />}>
               <Route
@@ -161,6 +291,7 @@ const AppContent = () => {
             </Route>
           </Routes>
         </AnimatePresence>
+        <Footer />
       </div>
     </>
   );

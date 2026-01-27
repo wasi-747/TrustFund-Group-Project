@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const Campaign = require("../models/Campaign");
-// Middleware to check if user is admin (Assuming you have one, or we can mock/skip for now based on context. 
-// The user prompt mentioned "Admin Endpoint", usually implies protection. 
+// Middleware to check if user is admin (Assuming you have one, or we can mock/skip for now based on context.
+// The user prompt mentioned "Admin Endpoint", usually implies protection.
 // I'll check auth middleware availability from file list later, but for now I'll use a placeholder or basic check if feasible.)
-// Looking at file list: `middleware` folder exists. 
+// Looking at file list: `middleware` folder exists.
 const auth = require("../middleware/auth"); // Guessing standard name
 
 // Middleware to force Admin Role
@@ -39,10 +39,10 @@ router.put("/verify-user/:id", auth, adminCheck, async (req, res) => {
   try {
     const User = require("../models/User");
     const { status } = req.body; // 'approved' or 'rejected'
-    
+
     // Safety check
     if (!["approved", "rejected"].includes(status)) {
-        return res.status(400).json({ msg: "Invalid status" });
+      return res.status(400).json({ msg: "Invalid status" });
     }
 
     const user = await User.findById(req.params.id);
@@ -117,14 +117,95 @@ router.put("/milestone/approve", auth, adminCheck, async (req, res) => {
     milestone.status = "approved";
     milestone.updatedAt = Date.now();
 
-    // Release funds
-    campaign.releasedAmount = (campaign.releasedAmount || 0) + milestone.amount;
+    // Release funds into wallet (only if enough locked funds exist)
+    const amount = Number(milestone.amount) || 0;
+    campaign.wallet = campaign.wallet || {};
+
+    // Use stored lockedAmount, but if missing/zero, derive from current minus released
+    const storedLocked = Number(campaign.wallet.lockedAmount || 0);
+    const derivedLocked = Math.max(
+      Number(campaign.currentAmount || 0) -
+        Number(campaign.releasedAmount || 0),
+      0,
+    );
+    const effectiveLocked = storedLocked || derivedLocked;
+
+    if (effectiveLocked < amount) {
+      return res.status(400).json({
+        msg: "Insufficient locked funds to release this milestone. Keep proof pending until more donations arrive.",
+      });
+    }
+
+    campaign.releasedAmount = (campaign.releasedAmount || 0) + amount;
+    campaign.wallet.lockedAmount = Math.max(effectiveLocked - amount, 0);
+    campaign.wallet.availableBalance =
+      (campaign.wallet.availableBalance || 0) + amount;
 
     await campaign.save();
+
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("milestone_updated", {
+        campaignId: campaign._id,
+        milestoneId,
+        status: "approved",
+        amount,
+        wallet: campaign.wallet,
+      });
+    }
 
     res.json({
       msg: "Milestone approved and funds released",
       campaignReleaseAmount: campaign.releasedAmount,
+      wallet: campaign.wallet,
+      milestone,
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route   PUT /api/admin/milestone/reject
+// @desc    Reject a milestone submission (revert to locked)
+// @access  Admin only
+router.put("/milestone/reject", auth, adminCheck, async (req, res) => {
+  const { campaignId, milestoneId } = req.body;
+
+  try {
+    const campaign = await Campaign.findById(campaignId);
+    if (!campaign) {
+      return res.status(404).json({ msg: "Campaign not found" });
+    }
+
+    const milestone = campaign.milestones.id(milestoneId);
+    if (!milestone) {
+      return res.status(404).json({ msg: "Milestone not found" });
+    }
+
+    if (milestone.status === "locked") {
+      return res.status(400).json({ msg: "Milestone is already locked" });
+    }
+
+    // Revert to locked so owner can re-submit proof
+    milestone.status = "locked";
+    milestone.updatedAt = Date.now();
+
+    await campaign.save();
+
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("milestone_updated", {
+        campaignId: campaign._id,
+        milestoneId,
+        status: "rejected",
+        amount: Number(milestone.amount) || 0,
+        wallet: campaign.wallet,
+      });
+    }
+
+    res.json({
+      msg: "Milestone rejected and returned to locked state",
       milestone,
     });
   } catch (err) {
