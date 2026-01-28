@@ -139,7 +139,11 @@ const Navbar = () => {
                     </div>
                     <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-4">
-                        <Link to="/discover" onClick={() => setActiveMenu(null)} className="block group">
+                        <Link
+                          to="/discover"
+                          onClick={() => setActiveMenu(null)}
+                          className="block group"
+                        >
                           <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
                             Categories
                           </p>
@@ -147,7 +151,11 @@ const Navbar = () => {
                             Browse fundraisers by category
                           </p>
                         </Link>
-                        <Link to="/crisis-relief" onClick={() => setActiveMenu(null)} className="block group">
+                        <Link
+                          to="/crisis-relief"
+                          onClick={() => setActiveMenu(null)}
+                          className="block group"
+                        >
                           <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
                             Crisis relief
                           </p>
@@ -157,7 +165,11 @@ const Navbar = () => {
                         </Link>
                       </div>
                       <div className="space-y-4">
-                        <Link to="/social-impact-funds" onClick={() => setActiveMenu(null)} className="block group">
+                        <Link
+                          to="/social-impact-funds"
+                          onClick={() => setActiveMenu(null)}
+                          className="block group"
+                        >
                           <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
                             Social Impact Funds
                           </p>
@@ -165,7 +177,11 @@ const Navbar = () => {
                             Direct support for urgent needs
                           </p>
                         </Link>
-                        <Link to="/supporter-space" onClick={() => setActiveMenu(null)} className="block group">
+                        <Link
+                          to="/supporter-space"
+                          onClick={() => setActiveMenu(null)}
+                          className="block group"
+                        >
                           <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
                             Supporter Space
                           </p>
@@ -209,7 +225,11 @@ const Navbar = () => {
                     </div>
                     <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-4">
-                        <Link to="/how-to-start" onClick={() => setActiveMenu(null)} className="block group">
+                        <Link
+                          to="/how-to-start"
+                          onClick={() => setActiveMenu(null)}
+                          className="block group"
+                        >
                           <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
                             How to start a TrustFund
                           </p>
@@ -217,7 +237,11 @@ const Navbar = () => {
                             Step-by-step help, examples, and more
                           </p>
                         </Link>
-                        <Link to="/fundraising-categories" onClick={() => setActiveMenu(null)} className="block group">
+                        <Link
+                          to="/fundraising-categories"
+                          onClick={() => setActiveMenu(null)}
+                          className="block group"
+                        >
                           <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
                             Fundraising categories
                           </p>
@@ -225,7 +249,11 @@ const Navbar = () => {
                             Find the right category for you
                           </p>
                         </Link>
-                        <Link to="/team-fundraising" onClick={() => setActiveMenu(null)} className="block group">
+                        <Link
+                          to="/team-fundraising"
+                          onClick={() => setActiveMenu(null)}
+                          className="block group"
+                        >
                           <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
                             Team fundraising
                           </p>
@@ -233,7 +261,11 @@ const Navbar = () => {
                             Fundraise together with a team
                           </p>
                         </Link>
-                        <Link to="/fundraising-blog" onClick={() => setActiveMenu(null)} className="block group">
+                        <Link
+                          to="/fundraising-blog"
+                          onClick={() => setActiveMenu(null)}
+                          className="block group"
+                        >
                           <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
                             Fundraising Blog
                           </p>
@@ -243,7 +275,11 @@ const Navbar = () => {
                         </Link>
                       </div>
                       <div className="space-y-4">
-                        <Link to="/fundraising-tips" onClick={() => setActiveMenu(null)} className="block group">
+                        <Link
+                          to="/fundraising-tips"
+                          onClick={() => setActiveMenu(null)}
+                          className="block group"
+                        >
                           <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
                             Fundraising tips
                           </p>
@@ -251,7 +287,11 @@ const Navbar = () => {
                             The ultimate fundraising tips guide
                           </p>
                         </Link>
-                        <Link to="/fundraising-ideas" onClick={() => setActiveMenu(null)} className="block group">
+                        <Link
+                          to="/fundraising-ideas"
+                          onClick={() => setActiveMenu(null)}
+                          className="block group"
+                        >
                           <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
                             Fundraising ideas
                           </p>
@@ -259,7 +299,11 @@ const Navbar = () => {
                             Ideas to spark your creativity
                           </p>
                         </Link>
-                        <Link to="/charity-fundraising" onClick={() => setActiveMenu(null)} className="block group">
+                        <Link
+                          to="/charity-fundraising"
+                          onClick={() => setActiveMenu(null)}
+                          className="block group"
+                        >
                           <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
                             Charity fundraising
                           </p>
@@ -267,7 +311,11 @@ const Navbar = () => {
                             Fundraise for a charity
                           </p>
                         </Link>
-                        <Link to="/nonprofit-signup" onClick={() => setActiveMenu(null)} className="block group">
+                        <Link
+                          to="/nonprofit-signup"
+                          onClick={() => setActiveMenu(null)}
+                          className="block group"
+                        >
                           <p className="dark:text-white text-gray-800 font-semibold group-hover:text-emerald-500 transition-colors">
                             Sign up as a nonprofit
                           </p>
@@ -336,7 +384,8 @@ const Navbar = () => {
                           Your Impact
                         </h4>
                         <Link
-                          to="/profile"
+                          to="/your-impact"
+                          onClick={() => setActiveMenu(null)}
                           className="flex items-center justify-between p-3 dark:bg-white/5 bg-white border dark:border-transparent border-gray-200 rounded-xl hover:shadow-md transition group"
                         >
                           <div className="flex items-center gap-3">

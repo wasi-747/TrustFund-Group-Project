@@ -19,6 +19,7 @@ import {
   FiDollarSign,
   FiArrowUpRight,
   FiArrowDownRight,
+  FiSmartphone,
 } from "react-icons/fi";
 
 const Settings = () => {
@@ -61,9 +62,47 @@ const Settings = () => {
   });
   const [wallet, setWallet] = useState({ balance: 0, pending: 0 });
   const [transactions, setTransactions] = useState([]);
+  const [donationHistory, setDonationHistory] = useState([]);
   const [ownedCampaigns, setOwnedCampaigns] = useState([]);
   const [showWithdrawPlanner, setShowWithdrawPlanner] = useState(false);
   const [allocations, setAllocations] = useState([]); // {id,title,available,amount}
+  const [withdrawMethod, setWithdrawMethod] = useState("mobile");
+  const [withdrawDetails, setWithdrawDetails] = useState({
+    accountName: "",
+    accountNumber: "",
+    bankName: "",
+    walletNumber: "",
+    note: "",
+  });
+  const [isSubmittingWithdraw, setIsSubmittingWithdraw] = useState(false);
+
+  const withdrawOptions = [
+    {
+      id: "mobile",
+      label: "Mobile banking (bKash/Nagad/Rocket)",
+      descriptor: "Routed via SSLCommerz wallet checkout",
+      icon: FiSmartphone,
+    },
+    {
+      id: "card",
+      label: "Cards (Visa / Mastercard / Amex)",
+      descriptor: "Processed through SSLCommerz card gateway",
+      icon: FiCreditCard,
+    },
+    {
+      id: "bank",
+      label: "Bank transfer",
+      descriptor: "Manual settlement from TrustFund ops",
+      icon: FiShield,
+    },
+  ];
+
+  const sortHistory = (items = []) =>
+    [...items].sort(
+      (a, b) =>
+        new Date(b.createdAt || b.date || 0) -
+        new Date(a.createdAt || a.date || 0),
+    );
 
   // 1. Fetch User Data
   useEffect(() => {
@@ -97,7 +136,7 @@ const Settings = () => {
           balance: res.data.walletBalance || 0,
           pending: res.data.pendingPayout || 0,
         });
-        setTransactions(res.data.walletHistory || []);
+        setTransactions(sortHistory(res.data.walletHistory || []));
 
         // Fetch owned campaigns to compute available balances
         try {
@@ -119,6 +158,62 @@ const Settings = () => {
         } catch (err) {
           console.error(
             "Campaign fetch failed",
+            err.response?.data || err.message,
+          );
+        }
+
+        // Fetch withdrawal history for this user
+        try {
+          const withdrawalsRes = await axios.get(
+            "http://localhost:5000/api/payment/my-withdrawals",
+            {
+              headers: { "x-auth-token": token },
+            },
+          );
+
+          const mappedWithdrawals = (withdrawalsRes.data || []).map((w) => ({
+            id: w._id,
+            type: "withdrawal",
+            amount: w.amount,
+            status: (w.status || "completed").toLowerCase(),
+            createdAt: w.createdAt,
+            note: w.method ? `Withdraw via ${w.method}` : "Withdrawal",
+          }));
+
+          setTransactions(sortHistory(mappedWithdrawals));
+        } catch (err) {
+          console.error(
+            "Withdrawal history fetch failed",
+            err.response?.data || err.message,
+          );
+        }
+
+        // Fetch donation history so we can render a unified timeline
+        try {
+          const donationRes = await axios.get(
+            "http://localhost:5000/api/payment/my-donations",
+            {
+              headers: { "x-auth-token": token },
+            },
+          );
+
+          const mappedDonations = (donationRes.data || []).map((d) => ({
+            id: d._id,
+            type: "donation",
+            amount: d.amount,
+            status: (d.status || "paid").toLowerCase(),
+            createdAt: d.date,
+            note: d.campaignId?.title
+              ? `Donated to ${d.campaignId.title}`
+              : "Donation",
+            campaignTitle: d.campaignId?.title,
+            campaignId: d.campaignId?._id || d.campaignId,
+          }));
+
+          setDonationHistory(sortHistory(mappedDonations));
+        } catch (err) {
+          console.error(
+            "Donation history fetch failed",
             err.response?.data || err.message,
           );
         }
@@ -258,6 +353,31 @@ const Settings = () => {
     toast.info("Payment method removed");
   };
 
+  const addDemoBalance = (amount = 5000) => {
+    const demoId = "demo-campaign";
+    const existing = ownedCampaigns.find((c) => c.id === demoId);
+    const updated = existing
+      ? ownedCampaigns.map((c) =>
+          c.id === demoId ? { ...c, available: c.available + amount } : c,
+        )
+      : [
+          ...ownedCampaigns,
+          {
+            id: demoId,
+            title: "Demo Campaign (Test Withdraw)",
+            available: amount,
+          },
+        ];
+
+    setOwnedCampaigns(updated);
+    const totalAvail = updated.reduce(
+      (s, c) => s + Number(c.available || 0),
+      0,
+    );
+    setWallet((prev) => ({ ...prev, balance: totalAvail }));
+    toast.info(`Added ৳${amount.toLocaleString()} demo balance for testing`);
+  };
+
   const handleStartWithdraw = () => {
     const totalAvail = ownedCampaigns.reduce((s, c) => s + c.available, 0);
     if (totalAvail <= 0) {
@@ -282,10 +402,53 @@ const Settings = () => {
     0,
   );
 
+  const validateWithdrawDetails = () => {
+    if (withdrawMethod === "mobile") {
+      if (!withdrawDetails.walletNumber.trim()) {
+        toast.warning("Enter your mobile wallet number to withdraw");
+        return false;
+      }
+    }
+
+    if (withdrawMethod === "card") {
+      if (!withdrawDetails.accountNumber.trim()) {
+        toast.warning("Add the card number or last 4 digits");
+        return false;
+      }
+      if (!withdrawDetails.accountName.trim()) {
+        toast.warning("Add the name on card for verification");
+        return false;
+      }
+    }
+
+    if (withdrawMethod === "bank") {
+      if (!withdrawDetails.accountName.trim()) {
+        toast.warning("Bank account holder name is required");
+        return false;
+      }
+      if (!withdrawDetails.bankName.trim()) {
+        toast.warning("Bank name is required");
+        return false;
+      }
+      if (!withdrawDetails.accountNumber.trim()) {
+        toast.warning("Bank account number is required");
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleConfirmWithdraw = async () => {
     const amount = Number(totalAllocated);
     if (!amount || amount <= 0)
       return toast.warning("Allocate an amount to withdraw");
+
+    const methodLabel =
+      withdrawOptions.find((o) => o.id === withdrawMethod)?.label ||
+      withdrawMethod;
+
+    if (!validateWithdrawDetails()) return;
 
     for (const a of allocations) {
       if ((Number(a.amount) || 0) > a.available) {
@@ -294,44 +457,112 @@ const Settings = () => {
     }
 
     const token = localStorage.getItem("token");
-    try {
-      await axios.post(
-        "http://localhost:5000/api/payment/withdraw",
-        {
-          amount,
-          allocations: allocations
-            .filter((a) => Number(a.amount) > 0)
-            .map((a) => ({ campaignId: a.id, amount: Number(a.amount) })),
-        },
-        { headers: { "x-auth-token": token } },
-      );
-    } catch (err) {
-      console.error("Withdraw error", err.response?.data || err.message);
+    const allocationsToProcess = allocations.filter(
+      (a) => Number(a.amount) > 0,
+    );
+    if (allocationsToProcess.length === 0)
+      return toast.warning("Select at least one campaign to withdraw from");
+
+    setIsSubmittingWithdraw(true);
+    const successfulTrx = [];
+    const failures = [];
+
+    for (const a of allocationsToProcess) {
+      const accountNumber =
+        withdrawDetails.walletNumber || withdrawDetails.accountNumber;
+
+      // Allow demo campaigns to bypass backend for testing
+      if (a.id === "demo-campaign") {
+        successfulTrx.push({
+          campaignId: a.id,
+          amount: Number(a.amount),
+          trxId: `DEMO-${Date.now()}`,
+        });
+        continue;
+      }
+
+      try {
+        const resp = await axios.post(
+          `/api/campaigns/${a.id}/withdraw`,
+          {
+            amount: Number(a.amount),
+            method: methodLabel,
+            accountNumber,
+            note: withdrawDetails.note,
+          },
+          { headers: { "x-auth-token": token } },
+        );
+
+        successfulTrx.push({
+          campaignId: a.id,
+          amount: Number(a.amount),
+          trxId: resp.data?.trxId,
+        });
+      } catch (err) {
+        console.error(
+          "Withdraw error",
+          err.response?.data || err.message || "Unknown error",
+        );
+        failures.push({
+          campaignId: a.id,
+          msg: err.response?.data?.msg || "Withdrawal failed",
+        });
+      }
     }
 
-    const updatedCampaigns = allocations.map((a) => ({
-      ...a,
-      available: Math.max(a.available - (Number(a.amount) || 0), 0),
-    }));
+    if (successfulTrx.length === 0) {
+      setIsSubmittingWithdraw(false);
+      toast.error(
+        failures[0]?.msg || "Could not submit withdrawal. Please try again.",
+      );
+      return;
+    }
+
+    const successIds = new Set(successfulTrx.map((t) => t.campaignId));
+    const updatedCampaigns = allocations.map((a) => {
+      if (!successIds.has(a.id)) return a;
+      const successAmt =
+        successfulTrx.find((t) => t.campaignId === a.id)?.amount || 0;
+      return {
+        ...a,
+        available: Math.max(a.available - successAmt, 0),
+      };
+    });
     setOwnedCampaigns(updatedCampaigns);
     const newTotal = updatedCampaigns.reduce((s, c) => s + c.available, 0);
     setWallet((prev) => ({
       ...prev,
       balance: newTotal,
-      pending: prev.pending + amount,
     }));
 
-    const entry = {
-      id: Date.now(),
+    const newEntries = successfulTrx.map((t) => ({
+      id: t.trxId || `${t.campaignId}-${Date.now()}`,
       type: "withdrawal",
-      amount,
+      amount: t.amount,
       createdAt: new Date().toISOString(),
-      status: "pending",
-      note: "Distributed across campaigns",
-    };
-    setTransactions((prev) => [entry, ...prev].slice(0, 20));
+      status: "completed",
+      note: `Withdraw via ${methodLabel}`,
+    }));
 
-    toast.success(`Withdrawal of ৳${amount} requested!`);
+    setTransactions((prev) => sortHistory([...newEntries, ...(prev || [])]));
+
+    setWithdrawDetails({
+      accountName: "",
+      accountNumber: "",
+      bankName: "",
+      walletNumber: "",
+      note: "",
+    });
+    setIsSubmittingWithdraw(false);
+
+    const successTotal = successfulTrx.reduce(
+      (s, t) => s + Number(t.amount || 0),
+      0,
+    );
+
+    toast.success(
+      `Withdrawal of ৳${successTotal.toLocaleString()} via ${methodLabel} requested!`,
+    );
     setShowWithdrawPlanner(false);
   };
 
@@ -412,16 +643,189 @@ const Settings = () => {
                 )}
               </div>
 
+              <div className="mt-4 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-white/5 space-y-3">
+                <h4 className="text-sm font-bold text-gray-800 dark:text-gray-100">
+                  Withdrawal details
+                </h4>
+
+                {withdrawMethod === "mobile" && (
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">
+                        Wallet number (bKash/Nagad/Rocket)
+                      </label>
+                      <input
+                        type="text"
+                        value={withdrawDetails.walletNumber}
+                        onChange={(e) =>
+                          setWithdrawDetails((prev) => ({
+                            ...prev,
+                            walletNumber: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 rounded-lg bg-white dark:bg-black border border-gray-300 dark:border-gray-700 focus:border-emerald-500 outline-none dark:text-white"
+                        placeholder="01XXXXXXXXX"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {withdrawMethod === "card" && (
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">
+                        Name on card
+                      </label>
+                      <input
+                        type="text"
+                        value={withdrawDetails.accountName}
+                        onChange={(e) =>
+                          setWithdrawDetails((prev) => ({
+                            ...prev,
+                            accountName: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 rounded-lg bg-white dark:bg-black border border-gray-300 dark:border-gray-700 focus:border-emerald-500 outline-none dark:text-white"
+                        placeholder="Cardholder name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">
+                        Card number / last 4
+                      </label>
+                      <input
+                        type="text"
+                        value={withdrawDetails.accountNumber}
+                        onChange={(e) =>
+                          setWithdrawDetails((prev) => ({
+                            ...prev,
+                            accountNumber: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 rounded-lg bg-white dark:bg-black border border-gray-300 dark:border-gray-700 focus:border-emerald-500 outline-none dark:text-white"
+                        placeholder="1234"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {withdrawMethod === "bank" && (
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">
+                        Account holder name
+                      </label>
+                      <input
+                        type="text"
+                        value={withdrawDetails.accountName}
+                        onChange={(e) =>
+                          setWithdrawDetails((prev) => ({
+                            ...prev,
+                            accountName: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 rounded-lg bg-white dark:bg-black border border-gray-300 dark:border-gray-700 focus:border-emerald-500 outline-none dark:text-white"
+                        placeholder="Account holder"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">
+                        Bank name
+                      </label>
+                      <input
+                        type="text"
+                        value={withdrawDetails.bankName}
+                        onChange={(e) =>
+                          setWithdrawDetails((prev) => ({
+                            ...prev,
+                            bankName: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 rounded-lg bg-white dark:bg-black border border-gray-300 dark:border-gray-700 focus:border-emerald-500 outline-none dark:text-white"
+                        placeholder="Bank / branch"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">
+                        Account number
+                      </label>
+                      <input
+                        type="text"
+                        value={withdrawDetails.accountNumber}
+                        onChange={(e) =>
+                          setWithdrawDetails((prev) => ({
+                            ...prev,
+                            accountNumber: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 rounded-lg bg-white dark:bg-black border border-gray-300 dark:border-gray-700 focus:border-emerald-500 outline-none dark:text-white"
+                        placeholder="0000 0000 0000"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">
+                    Note for TrustFund ops (optional)
+                  </label>
+                  <textarea
+                    value={withdrawDetails.note}
+                    onChange={(e) =>
+                      setWithdrawDetails((prev) => ({
+                        ...prev,
+                        note: e.target.value,
+                      }))
+                    }
+                    className="w-full px-3 py-2 rounded-lg bg-white dark:bg-black border border-gray-300 dark:border-gray-700 focus:border-emerald-500 outline-none dark:text-white h-20"
+                    placeholder="Add payout reference, branch code, etc."
+                  />
+                </div>
+              </div>
+
               <div className="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-800 pt-4">
-                <div className="text-sm text-gray-600 dark:text-gray-300">
-                  Allocated total: ৳{totalAllocated.toLocaleString()}
+                <div className="flex flex-col gap-2 text-sm text-gray-600 dark:text-gray-300">
+                  <span>
+                    Allocated total: ৳{totalAllocated.toLocaleString()}
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {withdrawOptions.map((opt) => {
+                      const Icon = opt.icon;
+                      const isActive = withdrawMethod === opt.id;
+                      return (
+                        <button
+                          key={opt.id}
+                          onClick={() => setWithdrawMethod(opt.id)}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition text-left ${
+                            isActive
+                              ? "bg-emerald-50 dark:bg-emerald-900/30 border-emerald-400 text-emerald-700 dark:text-emerald-200"
+                              : "bg-white dark:bg-black border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200"
+                          }`}
+                        >
+                          <Icon size={16} />
+                          <div className="flex flex-col leading-tight text-xs">
+                            <span className="font-semibold">{opt.label}</span>
+                            <span className="text-gray-500 dark:text-gray-400">
+                              {opt.descriptor}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
                 <button
                   onClick={handleConfirmWithdraw}
                   className="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-md active:scale-95 disabled:opacity-50"
-                  disabled={allocations.length === 0 || totalAllocated <= 0}
+                  disabled={
+                    allocations.length === 0 ||
+                    totalAllocated <= 0 ||
+                    isSubmittingWithdraw
+                  }
                 >
-                  Confirm Allocation
+                  {isSubmittingWithdraw
+                    ? "Submitting..."
+                    : "Confirm Allocation"}
                 </button>
               </div>
             </div>
@@ -854,23 +1258,36 @@ const Settings = () => {
                       >
                         Request Withdraw
                       </button>
+                      <button
+                        onClick={() => addDemoBalance(5000)}
+                        className="px-5 py-3 rounded-xl bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-800 dark:text-white font-bold shadow-md active:scale-95"
+                      >
+                        Add Demo Balance
+                      </button>
                     </div>
                     <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
                       Opens the allocation planner so you can choose amounts per
-                      campaign.
+                      campaign. Demo balance withdraws are mocked for testing.
                     </p>
                   </div>
 
-                  <div className="mt-4 border-t dark:border-gray-800 border-gray-200 pt-4 space-y-3">
+                  <div className="mt-3 p-4 rounded-xl border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-200 text-sm leading-relaxed">
+                    Locked escrow left after a campaign meets its goal moves
+                    into the TrustFund fund so we can donate to urgent cases. A
+                    small percentage of that escrow becomes TrustFund revenue to
+                    keep operations sustainable.
+                  </div>
+
+                  <div className="mt-4 border-t dark:border-gray-800 border-gray-200 pt-4 space-y-5">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-bold dark:text-gray-300 text-gray-800">
-                        Wallet & Donation History
+                        Withdrawal History
                       </p>
                       <span className="text-xs text-gray-500">Latest 10</span>
                     </div>
                     {transactions.length === 0 ? (
                       <p className="text-sm text-gray-500">
-                        No wallet activity yet.
+                        No withdrawals yet.
                       </p>
                     ) : (
                       <div className="space-y-3">
@@ -880,22 +1297,12 @@ const Settings = () => {
                             className="flex items-center justify-between p-3 rounded-xl border dark:border-gray-800 border-gray-200 dark:bg-white/5"
                           >
                             <div className="flex items-center gap-3">
-                              <div
-                                className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                                  t.type === "withdrawal"
-                                    ? "bg-amber-500/10 text-amber-500"
-                                    : "bg-emerald-500/10 text-emerald-500"
-                                }`}
-                              >
-                                {t.type === "withdrawal" ? (
-                                  <FiArrowDownRight />
-                                ) : (
-                                  <FiArrowUpRight />
-                                )}
+                              <div className="w-10 h-10 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center">
+                                <FiArrowDownRight />
                               </div>
                               <div>
                                 <p className="font-bold dark:text-white text-gray-900 capitalize">
-                                  {t.type}
+                                  Withdrawal
                                 </p>
                                 <p className="text-xs text-gray-500">
                                   {new Date(t.createdAt).toLocaleString()}
@@ -919,6 +1326,56 @@ const Settings = () => {
                         ))}
                       </div>
                     )}
+
+                    <div className="pt-4 border-t dark:border-gray-800 border-gray-200">
+                      <div className="flex items-center justify-between mb-3">
+                        <p className="text-sm font-bold dark:text-gray-300 text-gray-800">
+                          Donation History
+                        </p>
+                        <span className="text-xs text-gray-500">Latest 10</span>
+                      </div>
+                      {donationHistory.length === 0 ? (
+                        <p className="text-sm text-gray-500">
+                          No donations yet.
+                        </p>
+                      ) : (
+                        <div className="space-y-3">
+                          {donationHistory.slice(0, 10).map((d) => (
+                            <div
+                              key={d.id}
+                              className="flex items-center justify-between p-3 rounded-xl border dark:border-gray-800 border-gray-200 dark:bg-white/5"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                                  <FiArrowUpRight />
+                                </div>
+                                <div>
+                                  <p className="font-bold dark:text-white text-gray-900">
+                                    Donated ৳
+                                    {Number(d.amount || 0).toLocaleString()}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {new Date(
+                                      d.createdAt || d.date,
+                                    ).toLocaleString()}
+                                  </p>
+                                  {d.note && (
+                                    <p className="text-[11px] text-gray-500">
+                                      {d.note}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-xs text-gray-500 capitalize">
+                                  {d.status || "paid"}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -1052,4 +1509,3 @@ const Settings = () => {
 };
 
 export default Settings;
-

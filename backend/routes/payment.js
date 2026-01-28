@@ -3,6 +3,7 @@ const SSLCommerzPayment = require("sslcommerz-lts");
 const { v4: uuidv4 } = require("uuid");
 const Donation = require("../models/Donation");
 const Campaign = require("../models/Campaign");
+const Transaction = require("../models/Transaction");
 const User = require("../models/User"); // 👈 Import User Model
 const auth = require("../middleware/auth");
 const sendEmail = require("../utils/sendEmail"); // 👈 Import Email Helper
@@ -95,19 +96,27 @@ router.post("/success/:tranId", async (req, res) => {
 
     // 3. Update Campaign (Amount + Donators List)
     const donorUser = await User.findById(donation.donorId);
-    const donorName = donation.isAnonymous ? "Anonymous" : (donorUser ? donorUser.name : "Guest");
+    const donorName = donation.isAnonymous
+      ? "Anonymous"
+      : donorUser
+        ? donorUser.name
+        : "Guest";
 
-    const campaign = await Campaign.findByIdAndUpdate(donation.campaignId, {
-      $inc: { currentAmount: donation.amount },
-      $push: {
-        donators: {
-          user: donation.donorId,
-          name: donorName,
-          amount: donation.amount,
-          date: new Date(),
-        }
-      }
-    }, { new: true }); // Return updated doc used for email
+    const campaign = await Campaign.findByIdAndUpdate(
+      donation.campaignId,
+      {
+        $inc: { currentAmount: donation.amount },
+        $push: {
+          donators: {
+            user: donation.donorId,
+            name: donorName,
+            amount: donation.amount,
+            date: new Date(),
+          },
+        },
+      },
+      { new: true },
+    ); // Return updated doc used for email
 
     console.log(`✅ Payment Successful! Added ${donation.amount} to campaign.`);
 
@@ -159,7 +168,7 @@ router.post("/success/:tranId", async (req, res) => {
     const io = req.app.get("io");
     if (io) {
       console.log("📡 Emitting 'donation_received' event now...");
-      
+
       // Emit generic update (total amount)
       io.emit("donation_received", {
         campaignId: donation.campaignId.toString(),
@@ -170,11 +179,11 @@ router.post("/success/:tranId", async (req, res) => {
       io.emit("new_donation", {
         campaignId: donation.campaignId.toString(),
         donation: {
-            name: donorName,
-            amount: donation.amount,
-            date: new Date(),
-            message: "" // Add message support later if needed
-        }
+          name: donorName,
+          amount: donation.amount,
+          date: new Date(),
+          message: "", // Add message support later if needed
+        },
       });
     } else {
       console.error("❌ Socket.io instance NOT found in request!");
@@ -192,7 +201,7 @@ router.post("/fail/:tranId", async (req, res) => {
   const tranId = req.params.tranId;
   await Donation.findOneAndUpdate(
     { transactionId: tranId },
-    { status: "Failed" }
+    { status: "Failed" },
   );
   res.redirect(`${process.env.FRONTEND_URL}/payment/fail`);
 });
@@ -202,7 +211,7 @@ router.post("/cancel/:tranId", async (req, res) => {
   const tranId = req.params.tranId;
   await Donation.findOneAndUpdate(
     { transactionId: tranId },
-    { status: "Cancelled" }
+    { status: "Cancelled" },
   );
   res.redirect(`${process.env.FRONTEND_URL}/payment/fail`);
 });
@@ -214,6 +223,25 @@ router.get("/my-donations", auth, async (req, res) => {
       .populate("campaignId", "title image")
       .sort({ date: -1 });
     res.json(donations);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route   GET /api/payment/my-withdrawals
+// @desc    Get user's withdrawal transactions
+// @access  Private
+router.get("/my-withdrawals", auth, async (req, res) => {
+  try {
+    const withdrawals = await Transaction.find({
+      user: req.user.id,
+      type: "Withdrawal",
+    })
+      .populate("campaign", "title image")
+      .sort({ createdAt: -1 });
+
+    res.json(withdrawals);
   } catch (err) {
     console.error(err);
     res.status(500).send("Server Error");

@@ -47,6 +47,7 @@ import FundraisingCategories from "./pages/FundraisingCategories";
 import TeamFundraising from "./pages/TeamFundraising";
 import CharityFundraising from "./pages/CharityFundraising";
 import NonprofitSignup from "./pages/NonprofitSignup";
+import YourImpact from "./pages/YourImpact";
 import Footer from "./components/Footer";
 
 const AppContent = () => {
@@ -158,6 +159,15 @@ const AppContent = () => {
               element={
                 <PageWrapper>
                   <PaymentFail />
+                </PageWrapper>
+              }
+            />
+
+            <Route
+              path="/your-impact"
+              element={
+                <PageWrapper>
+                  <YourImpact />
                 </PageWrapper>
               }
             />
