@@ -1,0 +1,73 @@
+site_name: TrustFund Documentation
+site_description: Complete documentation for the TrustFund crowdfunding platform
+site_author: TrustFund Team
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: emerald
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: emerald
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - content.code.copy
+    - content.code.annotate
+    - search.highlight
+    - search.suggest
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: setup.md
+      - Environment Variables: environment.md
+  - Backend:
+      - Overview: backend/index.md
+      - API Routes: backend/api.md
+      - Models: backend/models.md
+      - Middleware: backend/middleware.md
+      - Real-time Events: backend/websockets.md
+  - Frontend:
+      - Overview: frontend/index.md
+      - Pages: frontend/pages.md
+      - Components: frontend/components.md
+      - State Management: frontend/context.md
+  - Features:
+      - Authentication: features/authentication.md
+      - Campaigns: features/campaigns.md
+      - Payments: features/payments.md
+      - Verification: features/verification.md
+      - AI Integration: features/ai.md
+  - API Reference: api-reference.md
