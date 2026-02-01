@@ -1,0 +1,2420 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Complete documentation for the TrustFund crowdfunding platform">
+      
+      
+        <meta name="author" content="TrustFund Team">
+      
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../components/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Pages - TrustFund Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="emerald" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#frontend-pages" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="TrustFund Documentation" class="md-header__button md-logo" aria-label="TrustFund Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TrustFund Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Pages
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="emerald" data-md-color-accent="teal"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="emerald" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../setup/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../backend/" class="md-tabs__link">
+          
+  
+  
+  Backend
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  Frontend
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../features/authentication/" class="md-tabs__link">
+          
+  
+  
+  Features
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="TrustFund Documentation" class="md-nav__button md-logo" aria-label="TrustFund Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    TrustFund Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../environment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backend
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Backend
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Routes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/middleware/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Middleware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/websockets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Real-time Events
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Frontend
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Frontend
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pages
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pages
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#page-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Page Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication Pages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Authentication Pages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#login-loginjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Login (Login.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#register-registerjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Register (Register.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forgotpassword-forgotpasswordjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ForgotPassword (ForgotPassword.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resetpassword-resetpasswordjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ResetPassword (ResetPassword.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#user-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User Pages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="User Pages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-dashboardjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard (Dashboard.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#profile-profilejsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Profile (Profile.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#settings-settingsjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Settings (Settings.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yourimpact-yourimpactjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YourImpact (YourImpact.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#campaign-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Pages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Campaign Pages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#discover-discoverjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discover (Discover.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campaigndetails-campaigndetailsjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CampaignDetails (CampaignDetails.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campaignwizard-campaignwizardjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CampaignWizard (CampaignWizard.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#admin-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Admin Pages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Admin Pages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adminlogin-adminloginjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AdminLogin (AdminLogin.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admindashboard-admindashboardjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AdminDashboard (AdminDashboard.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resource-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource Pages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Resource Pages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resources-resourcesjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resources (Resources.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fundraisingtips-fundraisingtipsjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FundraisingTips (FundraisingTips.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fundraisingideas-fundraisingideasjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FundraisingIdeas (FundraisingIdeas.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fundraisingblog-fundraisingblogjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FundraisingBlog (FundraisingBlog.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#category-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Category Pages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Category Pages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#crisisrelief-crisisreliefjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CrisisRelief (CrisisRelief.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#charityfundraising-charityfundraisingjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CharityFundraising (CharityFundraising.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#socialimpactfunds-socialimpactfundsjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SocialImpactFunds (SocialImpactFunds.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nonprofitsignup-nonprofitsignupjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NonprofitSignup (NonprofitSignup.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#payment-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Payment Pages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Payment Pages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#paymentsuccess-paymentsuccessjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PaymentSuccess (PaymentSuccess.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paymentfail-paymentfailjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PaymentFail (PaymentFail.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#page-wrapper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Page Wrapper
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../components/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Components
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../context/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    State Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Features
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Features
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/campaigns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Campaigns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/payments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Payments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/verification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Verification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/ai/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#page-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Page Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication Pages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Authentication Pages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#login-loginjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Login (Login.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#register-registerjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Register (Register.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forgotpassword-forgotpasswordjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ForgotPassword (ForgotPassword.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resetpassword-resetpasswordjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ResetPassword (ResetPassword.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#user-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User Pages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="User Pages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-dashboardjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard (Dashboard.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#profile-profilejsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Profile (Profile.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#settings-settingsjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Settings (Settings.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yourimpact-yourimpactjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YourImpact (YourImpact.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#campaign-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campaign Pages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Campaign Pages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#discover-discoverjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discover (Discover.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campaigndetails-campaigndetailsjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CampaignDetails (CampaignDetails.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campaignwizard-campaignwizardjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CampaignWizard (CampaignWizard.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#admin-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Admin Pages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Admin Pages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adminlogin-adminloginjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AdminLogin (AdminLogin.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admindashboard-admindashboardjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AdminDashboard (AdminDashboard.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resource-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource Pages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Resource Pages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resources-resourcesjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resources (Resources.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fundraisingtips-fundraisingtipsjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FundraisingTips (FundraisingTips.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fundraisingideas-fundraisingideasjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FundraisingIdeas (FundraisingIdeas.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fundraisingblog-fundraisingblogjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FundraisingBlog (FundraisingBlog.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#category-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Category Pages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Category Pages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#crisisrelief-crisisreliefjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CrisisRelief (CrisisRelief.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#charityfundraising-charityfundraisingjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CharityFundraising (CharityFundraising.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#socialimpactfunds-socialimpactfundsjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SocialImpactFunds (SocialImpactFunds.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nonprofitsignup-nonprofitsignupjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NonprofitSignup (NonprofitSignup.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#payment-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Payment Pages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Payment Pages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#paymentsuccess-paymentsuccessjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PaymentSuccess (PaymentSuccess.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paymentfail-paymentfailjsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PaymentFail (PaymentFail.jsx)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#page-wrapper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Page Wrapper
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="frontend-pages">Frontend Pages<a class="headerlink" href="#frontend-pages" title="Permanent link">&para;</a></h1>
+<p>Complete reference for all page components.</p>
+<hr />
+<h2 id="page-overview">Page Overview<a class="headerlink" href="#page-overview" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Pages</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>Login, Register, ForgotPassword, ResetPassword</td>
+</tr>
+<tr>
+<td><strong>User</strong></td>
+<td>Dashboard, Profile, Settings, YourImpact</td>
+</tr>
+<tr>
+<td><strong>Campaign</strong></td>
+<td>Discover, CampaignDetails, CampaignWizard</td>
+</tr>
+<tr>
+<td><strong>Admin</strong></td>
+<td>AdminLogin, AdminDashboard</td>
+</tr>
+<tr>
+<td><strong>Resources</strong></td>
+<td>Resources, FundraisingTips, FundraisingIdeas, FundraisingBlog</td>
+</tr>
+<tr>
+<td><strong>Categories</strong></td>
+<td>CrisisRelief, CharityFundraising, SocialImpactFunds</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="authentication-pages">Authentication Pages<a class="headerlink" href="#authentication-pages" title="Permanent link">&para;</a></h2>
+<h3 id="login-loginjsx">Login (<code>Login.jsx</code>)<a class="headerlink" href="#login-loginjsx" title="Permanent link">&para;</a></h3>
+<p>User authentication page with email/password login.</p>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Email and password form</li>
+<li>OTP verification step</li>
+<li>GitHub OAuth button</li>
+<li>Remember me option</li>
+<li>Link to registration</li>
+</ul>
+<p><strong>Flow:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>1. Enter credentials → Submit
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>2. OTP sent to email
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>3. Enter OTP → Verify
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>4. Redirect to Dashboard
+</code></pre></div>
+<hr />
+<h3 id="register-registerjsx">Register (<code>Register.jsx</code>)<a class="headerlink" href="#register-registerjsx" title="Permanent link">&para;</a></h3>
+<p>New user registration page.</p>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Name, email, password fields</li>
+<li>Role selection (Contributor/Fundraiser)</li>
+<li>Password strength indicator</li>
+<li>Terms acceptance</li>
+<li>OTP verification</li>
+</ul>
+<hr />
+<h3 id="forgotpassword-forgotpasswordjsx">ForgotPassword (<code>ForgotPassword.jsx</code>)<a class="headerlink" href="#forgotpassword-forgotpasswordjsx" title="Permanent link">&para;</a></h3>
+<p>Password recovery initiation.</p>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Email input</li>
+<li>Reset link sent via email</li>
+<li>Success/error feedback</li>
+</ul>
+<hr />
+<h3 id="resetpassword-resetpasswordjsx">ResetPassword (<code>ResetPassword.jsx</code>)<a class="headerlink" href="#resetpassword-resetpasswordjsx" title="Permanent link">&para;</a></h3>
+<p>Set new password after reset.</p>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Token validation from URL</li>
+<li>New password input</li>
+<li>Password confirmation</li>
+<li>Strength requirements</li>
+</ul>
+<hr />
+<h2 id="user-pages">User Pages<a class="headerlink" href="#user-pages" title="Permanent link">&para;</a></h2>
+<h3 id="dashboard-dashboardjsx">Dashboard (<code>Dashboard.jsx</code>)<a class="headerlink" href="#dashboard-dashboardjsx" title="Permanent link">&para;</a></h3>
+<p>Main user landing page after login.</p>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Campaign statistics</li>
+<li>Quick actions</li>
+<li>Recent activity</li>
+<li>Donation history</li>
+<li>Campaign cards grid</li>
+</ul>
+<p><strong>Sections:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>┌──────────────────────────────────────┐
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>│           Welcome Banner             │
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>├──────────────┬───────────────────────┤
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>│   Stats      │   Quick Actions       │
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>├──────────────┴───────────────────────┤
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>│         Your Campaigns               │
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>├──────────────────────────────────────┤
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>│         Recent Donations             │
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>└──────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="profile-profilejsx">Profile (<code>Profile.jsx</code>)<a class="headerlink" href="#profile-profilejsx" title="Permanent link">&para;</a></h3>
+<p>User profile display and editing.</p>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Avatar and cover image</li>
+<li>Bio and social links</li>
+<li>Top causes</li>
+<li>Highlights (pins &amp; links)</li>
+<li>Public/private toggle</li>
+<li>Edit mode</li>
+</ul>
+<p><strong>Editable Fields:</strong></p>
+<ul>
+<li>Name, username, bio</li>
+<li>Social media links</li>
+<li>Profile images</li>
+<li>Visibility settings</li>
+</ul>
+<hr />
+<h3 id="settings-settingsjsx">Settings (<code>Settings.jsx</code>)<a class="headerlink" href="#settings-settingsjsx" title="Permanent link">&para;</a></h3>
+<p>Account settings and preferences.</p>
+<p><strong>Sections:</strong></p>
+<ol>
+<li><strong>Account Info</strong> - Email, password change</li>
+<li><strong>Verification</strong> - KYC document upload</li>
+<li><strong>Notifications</strong> - Email preferences</li>
+<li><strong>Privacy</strong> - Profile visibility</li>
+<li><strong>Danger Zone</strong> - Account deletion</li>
+</ol>
+<p><strong>Verification Flow:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>1. Upload NID image
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>2. Enter NID number, phone, address
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>3. Submit for review
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>4. Admin approves/rejects
+</code></pre></div>
+<hr />
+<h3 id="yourimpact-yourimpactjsx">YourImpact (<code>YourImpact.jsx</code>)<a class="headerlink" href="#yourimpact-yourimpactjsx" title="Permanent link">&para;</a></h3>
+<p>Donor statistics and contribution history.</p>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Total donated amount</li>
+<li>Campaigns supported</li>
+<li>Impact visualization</li>
+<li>Donation timeline</li>
+<li>Badges/achievements</li>
+</ul>
+<hr />
+<h2 id="campaign-pages">Campaign Pages<a class="headerlink" href="#campaign-pages" title="Permanent link">&para;</a></h2>
+<h3 id="discover-discoverjsx">Discover (<code>Discover.jsx</code>)<a class="headerlink" href="#discover-discoverjsx" title="Permanent link">&para;</a></h3>
+<p>Browse all active campaigns.</p>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Campaign grid/list view</li>
+<li>Category filters</li>
+<li>Search functionality</li>
+<li>Sort options (newest, popular, ending soon)</li>
+<li>Pagination/infinite scroll</li>
+</ul>
+<hr />
+<h3 id="campaigndetails-campaigndetailsjsx">CampaignDetails (<code>CampaignDetails.jsx</code>)<a class="headerlink" href="#campaigndetails-campaigndetailsjsx" title="Permanent link">&para;</a></h3>
+<p>Single campaign view with all details.</p>
+<p><strong>Sections:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>┌──────────────────────────────────────┐
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>│     Cover Image / Video              │
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>├──────────────────────────────────────┤
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>│  Title          │  Donate Button     │
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>│  Progress Bar   │  Share Button      │
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>├──────────────────────────────────────┤
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>│           Campaign Story             │
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>├──────────────┬───────────────────────┤
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>│  Milestones  │  Recent Donations     │
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>├──────────────┴───────────────────────┤
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>│          Campaign Wallet             │
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>└──────────────────────────────────────┘
+</code></pre></div>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Real-time donation updates</li>
+<li>Milestone progress tracker</li>
+<li>Donation form</li>
+<li>Social sharing</li>
+<li>Campaign wallet transparency</li>
+<li>Owner actions (if owner)</li>
+</ul>
+<hr />
+<h3 id="campaignwizard-campaignwizardjsx">CampaignWizard (<code>CampaignWizard.jsx</code>)<a class="headerlink" href="#campaignwizard-campaignwizardjsx" title="Permanent link">&para;</a></h3>
+<p>Multi-step campaign creation form.</p>
+<p><strong>Steps:</strong></p>
+<ol>
+<li><strong>Location &amp; Category</strong></li>
+<li>Country selection</li>
+<li>ZIP code</li>
+<li>
+<p>Category selection</p>
+</li>
+<li>
+<p><strong>Goal &amp; Beneficiary</strong></p>
+</li>
+<li>Target amount</li>
+<li>Beneficiary type</li>
+<li>
+<p>Beneficiary name</p>
+</li>
+<li>
+<p><strong>Story &amp; Media</strong></p>
+</li>
+<li>Campaign title</li>
+<li>Description (with AI enhancement)</li>
+<li>Cover image upload</li>
+<li>Video upload (optional)</li>
+<li>
+<p>YouTube link</p>
+</li>
+<li>
+<p><strong>Milestones</strong> (Optional)</p>
+</li>
+<li>Add milestone steps</li>
+<li>Amount per milestone</li>
+<li>
+<p>Milestone descriptions</p>
+</li>
+<li>
+<p><strong>Review &amp; Submit</strong></p>
+</li>
+<li>Preview all details</li>
+<li>Terms acceptance</li>
+<li>Submit campaign</li>
+</ol>
+<hr />
+<h2 id="admin-pages">Admin Pages<a class="headerlink" href="#admin-pages" title="Permanent link">&para;</a></h2>
+<h3 id="adminlogin-adminloginjsx">AdminLogin (<code>AdminLogin.jsx</code>)<a class="headerlink" href="#adminlogin-adminloginjsx" title="Permanent link">&para;</a></h3>
+<p>Admin-specific login portal.</p>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Admin credentials</li>
+<li>Enhanced security checks</li>
+<li>Redirect to admin dashboard</li>
+</ul>
+<hr />
+<h3 id="admindashboard-admindashboardjsx">AdminDashboard (<code>AdminDashboard.jsx</code>)<a class="headerlink" href="#admindashboard-admindashboardjsx" title="Permanent link">&para;</a></h3>
+<p>Platform administration panel.</p>
+<p><strong>Sections:</strong></p>
+<ol>
+<li><strong>Overview Stats</strong></li>
+<li>Total users</li>
+<li>Total campaigns</li>
+<li>Total donations</li>
+<li>
+<p>Pending verifications</p>
+</li>
+<li>
+<p><strong>User Verifications</strong></p>
+</li>
+<li>Pending verification requests</li>
+<li>View submitted documents</li>
+<li>
+<p>Approve/Reject actions</p>
+</li>
+<li>
+<p><strong>Milestone Approvals</strong></p>
+</li>
+<li>Pending milestone proofs</li>
+<li>Review proof images</li>
+<li>
+<p>Release funds on approval</p>
+</li>
+<li>
+<p><strong>Campaign Management</strong></p>
+</li>
+<li>All campaigns list</li>
+<li>Ban/unban campaigns</li>
+<li>Feature campaigns</li>
+</ol>
+<hr />
+<h2 id="resource-pages">Resource Pages<a class="headerlink" href="#resource-pages" title="Permanent link">&para;</a></h2>
+<h3 id="resources-resourcesjsx">Resources (<code>Resources.jsx</code>)<a class="headerlink" href="#resources-resourcesjsx" title="Permanent link">&para;</a></h3>
+<p>Hub for fundraising resources and guides.</p>
+<p><strong>Links to:</strong></p>
+<ul>
+<li>How to Start</li>
+<li>Fundraising Tips</li>
+<li>Fundraising Ideas</li>
+<li>Blog</li>
+</ul>
+<hr />
+<h3 id="fundraisingtips-fundraisingtipsjsx">FundraisingTips (<code>FundraisingTips.jsx</code>)<a class="headerlink" href="#fundraisingtips-fundraisingtipsjsx" title="Permanent link">&para;</a></h3>
+<p>Best practices for successful campaigns.</p>
+<p><strong>Topics:</strong></p>
+<ul>
+<li>Writing compelling stories</li>
+<li>Setting realistic goals</li>
+<li>Promoting your campaign</li>
+<li>Engaging donors</li>
+<li>Milestone planning</li>
+</ul>
+<hr />
+<h3 id="fundraisingideas-fundraisingideasjsx">FundraisingIdeas (<code>FundraisingIdeas.jsx</code>)<a class="headerlink" href="#fundraisingideas-fundraisingideasjsx" title="Permanent link">&para;</a></h3>
+<p>Creative fundraising campaign ideas.</p>
+<p><strong>Categories:</strong></p>
+<ul>
+<li>Medical</li>
+<li>Education</li>
+<li>Emergency</li>
+<li>Community</li>
+<li>Creative projects</li>
+</ul>
+<hr />
+<h3 id="fundraisingblog-fundraisingblogjsx">FundraisingBlog (<code>FundraisingBlog.jsx</code>)<a class="headerlink" href="#fundraisingblog-fundraisingblogjsx" title="Permanent link">&para;</a></h3>
+<p>Articles and success stories.</p>
+<p><strong>Content:</strong></p>
+<ul>
+<li>Success stories</li>
+<li>Platform updates</li>
+<li>Tips and tricks</li>
+<li>Community highlights</li>
+</ul>
+<hr />
+<h2 id="category-pages">Category Pages<a class="headerlink" href="#category-pages" title="Permanent link">&para;</a></h2>
+<h3 id="crisisrelief-crisisreliefjsx">CrisisRelief (<code>CrisisRelief.jsx</code>)<a class="headerlink" href="#crisisrelief-crisisreliefjsx" title="Permanent link">&para;</a></h3>
+<p>Campaigns for emergency and disaster relief.</p>
+<hr />
+<h3 id="charityfundraising-charityfundraisingjsx">CharityFundraising (<code>CharityFundraising.jsx</code>)<a class="headerlink" href="#charityfundraising-charityfundraisingjsx" title="Permanent link">&para;</a></h3>
+<p>Information for registered charities.</p>
+<hr />
+<h3 id="socialimpactfunds-socialimpactfundsjsx">SocialImpactFunds (<code>SocialImpactFunds.jsx</code>)<a class="headerlink" href="#socialimpactfunds-socialimpactfundsjsx" title="Permanent link">&para;</a></h3>
+<p>Social impact and community projects.</p>
+<hr />
+<h3 id="nonprofitsignup-nonprofitsignupjsx">NonprofitSignup (<code>NonprofitSignup.jsx</code>)<a class="headerlink" href="#nonprofitsignup-nonprofitsignupjsx" title="Permanent link">&para;</a></h3>
+<p>Special registration for nonprofit organizations.</p>
+<hr />
+<h2 id="payment-pages">Payment Pages<a class="headerlink" href="#payment-pages" title="Permanent link">&para;</a></h2>
+<h3 id="paymentsuccess-paymentsuccessjsx">PaymentSuccess (<code>PaymentSuccess.jsx</code>)<a class="headerlink" href="#paymentsuccess-paymentsuccessjsx" title="Permanent link">&para;</a></h3>
+<p>Displayed after successful donation.</p>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Thank you message</li>
+<li>Donation receipt</li>
+<li>Social share options</li>
+<li>Return to campaign link</li>
+</ul>
+<hr />
+<h3 id="paymentfail-paymentfailjsx">PaymentFail (<code>PaymentFail.jsx</code>)<a class="headerlink" href="#paymentfail-paymentfailjsx" title="Permanent link">&para;</a></h3>
+<p>Displayed after failed payment.</p>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Error message</li>
+<li>Retry option</li>
+<li>Support contact</li>
+<li>Return to campaign link</li>
+</ul>
+<hr />
+<h2 id="page-wrapper">Page Wrapper<a class="headerlink" href="#page-wrapper" title="Permanent link">&para;</a></h2>
+<p>All pages use <code>PageWrapper</code> for consistent animations:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">&lt;</span><span class="nt">PageWrapper</span><span class="p">&gt;</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="p">&lt;</span><span class="nt">YourPage</span><span class="w"> </span><span class="p">/&gt;</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="p">&lt;/</span><span class="nt">PageWrapper</span><span class="p">&gt;</span>
+</code></pre></div>
+<p>Provides Framer Motion entrance/exit animations.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "content.code.copy", "content.code.annotate", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
